@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-
+<title>電影海報展示</title>
 <style>
 body {
   margin: 0;
@@ -16,10 +16,16 @@ body {
   display: flex;
   gap: 30px;
   padding: 60px;
+  justify-content: center;
 }
 
-/* 🔹 圖片 */
-.gallery img {
+/* 🔹 海報容器 */
+.poster {
+  text-align: center; /* 讓標題置中 */
+}
+
+/* 🔹 海報圖片 */
+.poster img {
   height: 260px;
   border-radius: 12px;
   cursor: pointer;
@@ -28,9 +34,18 @@ body {
 }
 
 /* 🔥 滑鼠效果 */
-.gallery img:hover {
+.poster img:hover {
   transform: scale(1.08);
   box-shadow: 0 20px 60px rgba(255,255,255,0.2);
+}
+
+/* 🔹 海報下方標題 */
+.title {
+  color: #fff;
+  font-size: 14px;
+  margin-top: 8px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2);
 }
 
 /* 🔹 放大畫面 */
@@ -45,6 +60,7 @@ body {
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.4s;
+  z-index: 1000;
 }
 
 /* 🔹 大圖 */
@@ -71,49 +87,25 @@ body {
 
 <body>
 
+<!-- 海報畫廊 -->
 <div class="gallery">
   <div class="poster">
     <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg" alt="水管嬰兒">
     <div class="title">&lt;&lt; 水管嬰兒 BLOOD TUBE BABY &gt;&gt;</div>
-    .poster {
-  text-align: center;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 10px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(255,255,255,0.2);
-}
   </div>
   <div class="poster">
     <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg" alt="透明的孩子">
     <div class="title">&lt;&lt; 透明的孩子 THE WINGLESS CHILD &gt;&gt;</div>
-      .poster {
-  text-align: center;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 10px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(255,255,255,0.2);
-}
   </div>
   <div class="poster">
     <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260326_zh_poster_v01.jpg" alt="真話">
     <div class="title">&lt;&lt; 真話 &gt;&gt;</div>
-      .poster {
-  text-align: center;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 10px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(255,255,255,0.2);
-}
   </div>
+</div>
 
+<!-- 點擊放大查看 -->
 <div class="viewer" id="viewer">
-  <img id="big">
+  <img id="big" alt="大圖">
 </div>
 
 <script>
