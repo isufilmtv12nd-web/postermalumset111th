@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
 
+<style>
+body {
+  margin: 0;
+  background: #000;
+  overflow-x: auto;
+}
+
+/* 橫向滑動 */
+.gallery {
+  display: flex;
+  gap: 20px;
+  padding: 40px;
+}
+
+.gallery img {
+  height: 300px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.gallery img:hover {
+  transform: scale(1.1);
+}
+
+/* 放大畫面 */
+.viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.viewer img {
+  max-width: 90%;
+  max-height: 90%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="gallery">
+  <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg">
+
+  <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg">
+
+  <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster02.jpg">
+</div>
+
+<div class="viewer" id="viewer">
+  <img id="big">
+</div>
+
+<script>
+const viewer = document.getElementById("viewer");
+const big = document.getElementById("big");
+
+document.querySelectorAll(".gallery img").forEach(img => {
+  img.onclick = () => {
+    viewer.style.display = "flex";
+    big.src = img.src;
+  };
+});
+
+viewer.onclick = () => {
+  viewer.style.display = "none";
+};
+</script>
+
+</body>
+</html>
