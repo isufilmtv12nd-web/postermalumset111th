@@ -2,130 +2,198 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>電影海報展示</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>橫式 3D 劇院畫廊</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;900&family=JetBrains+Mono:wght@100&display=swap" rel="stylesheet">
+
 <style>
-body {
-  margin: 0;
-  background: #000;
-  font-family: sans-serif;
-  overflow-x: auto;
-}
+  :root {
+    --maroon: #800000;
+  }
 
-/* 🔹 畫廊 */
-.gallery {
-  display: flex;
-  gap: 30px;
-  padding: 60px;
-  justify-content: center;
-}
+  body {
+    margin: 0;
+    background: #0a0a0a;
+    font-family: 'Noto Serif TC', serif;
+    color: #fff;
+    /* 隱藏捲軸但可橫向捲動 */
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    scrollbar-width: none;
+  }
+  body::-webkit-scrollbar { display: none; }
 
-/* 🔹 海報容器 */
-.poster {
-  text-align: center; /* 讓標題置中 */
-}
+  /* 🔹 橫式畫廊容器 */
+  .gallery {
+    display: flex;
+    gap: 60px;
+    padding: 0 100px;
+    perspective: 1000px; /* 賦予父層 3D 透視感 */
+  }
 
-/* 🔹 海報圖片 */
-.poster img {
-  height: 260px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.4s;
-  box-shadow: 0 10px 30px rgba(255,255,255,0.08);
-}
+  /* 🔹 海報容器：這裡是 3D 效果的核心 */
+  .poster-wrap {
+    flex: 0 0 280px;
+    text-align: center;
+    cursor: pointer;
+    /* 確保 3D 子元素能正確呈現層次 */
+    transform-style: preserve-3d; 
+  }
 
-/* 🔥 滑鼠效果 */
-.poster img:hover {
-  transform: scale(1.08);
-  box-shadow: 0 20px 60px rgba(255,255,255,0.2);
-}
+  .poster-card {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 12px;
+    background: #111;
+    overflow: hidden;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
 
-/* 🔹 海報下方標題 */
-.title {
-  color: #fff;
-  font-size: 14px;
-  margin-top: 8px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(255,255,255,0.2);
-}
+  .poster-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none; /* 避免干擾滑鼠偵測 */
+  }
 
-/* 🔹 放大畫面 */
-.viewer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.95);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 0.4s;
-  z-index: 1000;
-}
+  /* 滑鼠移入時的標題效果 */
+  .poster-title {
+    margin-top: 25px;
+    font-size: 14px;
+    letter-spacing: 3px;
+    opacity: 0.6;
+    transition: 0.3s;
+    text-transform: uppercase;
+  }
+  .poster-wrap:hover .poster-title {
+    opacity: 1;
+    color: #fff;
+    transform: translateZ(30px); /* 讓文字也有懸浮感 */
+  }
 
-/* 🔹 大圖 */
-.viewer img {
-  max-width: 85%;
-  max-height: 85%;
-  border-radius: 14px;
-  box-shadow: 0 30px 100px rgba(0,0,0,1);
-  animation: zoomIn 0.4s;
-}
-
-/* ✨ 動畫 */
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-@keyframes zoomIn {
-  from {transform: scale(0.8);}
-  to {transform: scale(1);}
-}
+  /* 🔹 彈窗 (與之前相同，保持結構穩定) */
+  .viewer-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(15px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: 0.4s;
+  }
+  .viewer-overlay.active { opacity: 1; display: flex; }
+  .content-box {
+    background: #141414;
+    width: 900px; height: 550px;
+    display: flex; border-radius: 10px; overflow: hidden;
+  }
+  .modal-left { flex: 0 0 40%; }
+  .modal-left img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-right { flex: 1; padding: 50px; position: relative; }
+  .modal-close { position: absolute; top: 20px; right: 20px; cursor: pointer; color: #666; font-size: 12px; }
 </style>
 </head>
 
 <body>
 
-<!-- 海報畫廊 -->
-<div class="gallery">
-  <div class="poster">
-    <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg" alt="水管嬰兒">
-    <div class="title">&lt;&lt; 水管嬰兒 BLOOD TUBE BABY &gt;&gt;</div>
-  </div>
-  <div class="poster">
-    <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg" alt="透明的孩子">
-    <div class="title">&lt;&lt; 透明的孩子 THE WINGLESS CHILD &gt;&gt;</div>
-  </div>
-  <div class="poster">
-    <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260326_zh_poster_v01.jpg" alt="真話">
-    <div class="title">&lt;&lt; 真話 MAKOTO &gt;&gt;</div>
-  </div>
-    <div class="poster">
-    <img src="https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png" alt="煙燻屋">
-    <div class="title">&lt;&lt; 煙燻屋 THROUGH THE SMOKE &gt;&gt;</div>
-  </div>
-</div>
+<div class="gallery" id="gallery"></div>
 
-<!-- 點擊放大查看 -->
-<div class="viewer" id="viewer">
-  <img id="big" alt="大圖">
+<div class="viewer-overlay" id="viewerOverlay">
+  <div class="content-box">
+    <div class="modal-close" onclick="closeModal()">[ CLOSE ]</div>
+    <div class="modal-left"><img id="modalImg" src=""></div>
+    <div class="modal-right">
+      <h2 id="modalTitle" style="font-size: 2rem; letter-spacing: 5px;"></h2>
+      <p id="modalTagline" style="color:var(--maroon); font-style:italic; margin: 15px 0;"></p>
+      <p id="modalSynopsis" style="line-height:1.8; color:#ccc;"></p>
+    </div>
+  </div>
 </div>
 
 <script>
-const viewer = document.getElementById("viewer");
-const big = document.getElementById("big");
+const posterData = [
+  { title: "水管嬰兒", tagline: "BLOOD TUBE BABY", synopsis: "在廢棄的地下管網中，一個非法的生命實驗悄然甦醒...", img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg" },
+  { title: "透明的孩子", tagline: "THE WINGLESS CHILD", synopsis: "這群孩子沒有翅膀，卻試圖在高樓廢墟間學習飛翔...", img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg" },
+  { title: "真話", tagline: "MAKOTO", synopsis: "真相往往藏在語言的裂縫中。一名記者在調查神秘失蹤案時...", img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260326_zh_poster_v01.jpg" },
+  { title: "煙燻屋", tagline: "THROUGH THE SMOKE", synopsis: "封閉的空間，瀰漫的煙霧，四個陌生人在一場意外後受困...", img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png" }
+];
 
-document.querySelectorAll(".gallery img").forEach(img => {
-  img.onclick = () => {
-    viewer.style.display = "flex";
-    big.src = img.src;
-  };
+const gallery = document.getElementById('gallery');
+
+// 1. 動態生成海報
+posterData.forEach(data => {
+  const wrap = document.createElement('div');
+  wrap.className = 'poster-wrap';
+  wrap.innerHTML = `
+    <div class="poster-card">
+      <img src="${data.img}">
+    </div>
+    <div class="poster-title">${data.title}</div>
+  `;
+  
+  // 綁定 3D 傾斜事件
+  wrap.addEventListener('mousemove', (e) => handleTilt(e, wrap));
+  wrap.addEventListener('mouseleave', () => resetTilt(wrap));
+  wrap.onclick = () => openModal(data);
+  
+  gallery.appendChild(wrap);
 });
 
-viewer.onclick = () => {
-  viewer.style.display = "none";
-};
+// 2. 3D 傾斜邏輯
+function handleTilt(e, el) {
+  const card = el.querySelector('.poster-card');
+  const rect = el.getBoundingClientRect();
+  
+  // 計算滑鼠在元素內的相對位置 (0 到 1 之間)
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  // 轉換為旋轉角度 (限制在 -15度 到 15度)
+  const xc = rect.width / 2;
+  const yc = rect.height / 2;
+  const dx = (x - xc) / (rect.width / 2);
+  const dy = (y - yc) / (rect.height / 2);
+  
+  // 這裡要注意：繞 Y 軸轉動產生水平傾斜，繞 X 軸轉動產生垂直傾斜
+  const rotateY = dx * 15; 
+  const rotateX = -dy * 15; 
+
+  card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+  card.style.boxShadow = `${-dx * 20}px ${-dy * 20}px 50px rgba(0,0,0,0.9)`;
+}
+
+function resetTilt(el) {
+  const card = el.querySelector('.poster-card');
+  card.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+  card.style.boxShadow = `0 10px 40px rgba(0,0,0,0.8)`;
+}
+
+// 3. 彈窗控制
+function openModal(data) {
+  const overlay = document.getElementById('viewerOverlay');
+  document.getElementById('modalImg').src = data.img;
+  document.getElementById('modalTitle').innerText = data.title;
+  document.getElementById('modalTagline').innerText = data.tagline;
+  document.getElementById('modalSynopsis').innerText = data.synopsis;
+  overlay.style.display = 'flex';
+  setTimeout(() => overlay.classList.add('active'), 10);
+}
+
+function closeModal() {
+  const overlay = document.getElementById('viewerOverlay');
+  overlay.classList.remove('active');
+  setTimeout(() => overlay.style.display = 'none', 400);
+}
 </script>
 
 </body>
