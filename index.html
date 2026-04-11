@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Poster Showcase</title>
 
 <style>
@@ -10,470 +10,212 @@
 
 :root{
   --text:#ffffff;
-  --sub:rgba(255,255,255,0.78);
-  --muted:rgba(255,255,255,0.54);
-  --line:rgba(255,255,255,0.10);
-  --glass:rgba(18,18,18,0.32);
-  --glass-strong:rgba(10,10,10,0.52);
-  --pill:rgba(255,255,255,0.10);
-  --shadow:0 22px 60px rgba(0,0,0,0.32);
-  --radius:28px;
-}
-
-html, body{
-  margin:0;
-  padding:0;
-  width:100%;
-  background:transparent;
-  color:var(--text);
-  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", "Noto Sans TC", sans-serif;
-  overflow-x:hidden;
+  --glass:rgba(18,18,18,0.35);
+  --glass-strong:rgba(10,10,10,0.55);
 }
 
 body{
-  background:transparent;
-}
-
-.page{
-  width:100%;
-  padding:12px 0 28px;
-  background:transparent;
-}
-
-.hero{
-  width:min(1120px, calc(100% - 24px));
-  margin:0 auto 18px;
-}
-
-.hero-kicker{
-  font-size:11px;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-bottom:10px;
-}
-
-.hero-title{
   margin:0;
-  font-size:clamp(28px, 5vw, 54px);
-  line-height:1.02;
-  letter-spacing:-0.04em;
-  font-weight:700;
+  background:transparent;
+  color:#fff;
+  font-family:-apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.hero-sub{
-  margin:12px 0 0;
-  max-width:760px;
-  font-size:clamp(14px, 2vw, 17px);
-  line-height:1.7;
-  color:var(--sub);
-}
-
+/* layout */
 .gallery{
-  width:min(1120px, calc(100% - 24px));
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:1fr;
-  gap:22px;
+  width:min(1100px, calc(100% - 20px));
+  margin:20px auto;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
 }
 
+/* card */
 .poster-card{
   position:relative;
-  width:100%;
-  min-height:86svh;
-  height:86svh;
-  max-height:1120px;
-  border-radius:30px;
+  height:80vh;
+  border-radius:28px;
   overflow:hidden;
-  background:rgba(0,0,0,0.10);
-  border:1px solid rgba(255,255,255,0.10);
-  backdrop-filter:blur(18px) saturate(118%);
-  -webkit-backdrop-filter:blur(18px) saturate(118%);
-  box-shadow:var(--shadow);
-  isolation:isolate;
-  transform-style:preserve-3d;
-  perspective:1400px;
-  will-change:transform;
-  transition:
-    transform .24s ease,
-    box-shadow .24s ease,
-    border-color .24s ease;
+  background:#000;
 }
 
-.poster-card:hover{
-  border-color:rgba(255,255,255,0.15);
-  box-shadow:0 30px 70px rgba(0,0,0,0.38);
-}
-
-.poster-media{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-}
-
-.poster-media img{
+.poster-card img{
   width:100%;
   height:100%;
   object-fit:cover;
-  display:block;
-  transform:scale(1.03);
-  transition:transform .28s ease;
-  backface-visibility:hidden;
 }
 
-.poster-card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  background:
-    linear-gradient(180deg,
-      rgba(0,0,0,0.08) 0%,
-      rgba(0,0,0,0.04) 20%,
-      rgba(0,0,0,0.18) 48%,
-      rgba(0,0,0,0.88) 100%);
-}
-
-.poster-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 50% 14%, rgba(255,255,255,0.12), transparent 24%),
-    linear-gradient(120deg, rgba(255,255,255,0.07), transparent 24%, transparent 74%, rgba(255,255,255,0.04));
-  mix-blend-mode:screen;
-  opacity:.28;
-}
-
+/* info */
 .poster-info{
   position:absolute;
-  left:14px;
-  right:14px;
-  bottom:14px;
-  z-index:4;
+  bottom:16px;
+  left:16px;
+  right:16px;
   padding:16px;
-  border-radius:22px;
+  border-radius:18px;
   background:linear-gradient(180deg, var(--glass), var(--glass-strong));
-  border:1px solid var(--line);
-  backdrop-filter:blur(18px) saturate(120%);
-  -webkit-backdrop-filter:blur(18px) saturate(120%);
-  box-shadow:0 10px 28px rgba(0,0,0,0.24);
-  transform:translateZ(34px);
+  backdrop-filter:blur(18px);
 }
 
-.pill{
-  display:inline-flex;
-  align-items:center;
-  padding:7px 12px;
-  border-radius:999px;
-  background:var(--pill);
-  border:1px solid rgba(255,255,255,0.08);
-  font-size:10px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.86);
-  margin-bottom:12px;
-}
-
+/* title */
 .poster-title{
+  font-size:32px;
   margin:0;
-  font-size:clamp(28px, 4vw, 46px);
-  line-height:1.02;
-  font-weight:700;
-  letter-spacing:-0.04em;
-  text-shadow:0 2px 18px rgba(0,0,0,0.22);
 }
 
 .poster-tagline{
-  margin:8px 0 0;
   font-size:12px;
-  letter-spacing:.20em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.70);
+  letter-spacing:2px;
+  opacity:.7;
 }
 
-.poster-copy{
-  margin-top:14px;
-  max-width:900px;
-}
-
-.poster-copy p{
-  margin:0 0 .9em;
-  font-size:14px;
-  line-height:1.68;
-}
-
-.poster-copy .zh{
-  color:rgba(255,255,255,0.95);
-}
-
-.poster-copy .en{
-  color:rgba(255,255,255,0.80);
-}
-
-.poster-copy .question{
-  font-weight:600;
-  color:#fff;
-}
-
-.poster-actions{
-  margin-top:14px;
+/* language switch */
+.lang-switch{
+  margin-top:12px;
   display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+  gap:8px;
 }
 
-.poster-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:42px;
-  padding:11px 16px;
+.lang-btn{
+  padding:6px 12px;
   border-radius:999px;
-  text-decoration:none;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.1);
   cursor:pointer;
-  font-size:13px;
-  transition:transform .2s ease, background .2s ease, opacity .2s ease;
+  font-size:12px;
 }
 
-.poster-btn.primary{
+.lang-btn.active{
   background:#fff;
-  color:#111;
+  color:#000;
+}
+
+/* text */
+.text{
+  margin-top:12px;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.hidden{
+  display:none;
+}
+
+/* button */
+.poster-btn{
+  margin-top:12px;
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:999px;
+  background:#fff;
+  color:#000;
+  text-decoration:none;
   font-weight:600;
 }
 
-.poster-btn:hover{
-  transform:translateY(-1px);
-}
-
-@media (max-width: 767px){
-  .page{
-    padding:8px 0 20px;
-  }
-
-  .hero{
-    width:calc(100% - 16px);
-    margin-bottom:14px;
-  }
-
-  .gallery{
-    width:calc(100% - 16px);
-    gap:16px;
-  }
-
-  .poster-card{
-    height:auto;
-    min-height:760px;
-    border-radius:22px;
-  }
-
-  .poster-info{
-    left:10px;
-    right:10px;
-    bottom:10px;
-    padding:14px;
-    border-radius:18px;
-  }
-
-  .pill{
-    font-size:9px;
-    margin-bottom:10px;
-  }
-
-  .poster-title{
-    font-size:30px;
-  }
-
-  .poster-tagline{
-    font-size:11px;
-    letter-spacing:.14em;
-  }
-
-  .poster-copy p{
-    font-size:13px;
-    line-height:1.6;
-  }
-
-  .poster-btn{
-    min-height:40px;
-    padding:10px 14px;
-    font-size:12px;
-  }
-}
-
-@media (hover: none){
-  .poster-card{
-    transform:none !important;
-  }
-}
 </style>
 </head>
+
 <body>
 
-<div class="page">
-  <section class="hero">
-    <div class="hero-kicker">Featured Posters</div>
-    <h1 class="hero-title">Now Showing</h1>
-    <p class="hero-sub">
-      以直向排列展示每部作品，保留 Netflix 電影感與 Apple 式玻璃 UI，
-      每張海報直接顯示中英文介紹，並可跳轉至對應的 Google Sites 分頁。
-    </p>
-  </section>
-
-  <section class="gallery" id="gallery"></section>
-</div>
+<div class="gallery" id="gallery"></div>
 
 <script>
-const posterData = [
-  {
-    title: "水管嬰兒",
-    tagline: "BLOOD TUBE BABY",
-    zh: [
-      "有些痛，不在身體，而在被迫承受的「意義」。",
-      "林婉霏因創傷逃避面對腹中生命，林淑儀因不孕將想像的孩子視為唯一救贖。現實與幻象交錯，她們的生命在崩解與渴望中互相映照，也揭示了在傳統生育觀念與社會期待下，女性對自己身體與生命的掙扎與困境。",
-      "當社會早已設下框架，女性，是否真的能決定自己的身體與生命？"
-    ],
-    en: [
-      "Some pain does not reside in the body, but in the meaning one is forced to bear.",
-      "Haunted by trauma, Lin Wan-fei avoids confronting the life growing within her. Lin Shu-yi, meanwhile, struggles with infertility and clings to an imagined child as her only salvation. As reality and illusion intertwine, their lives mirror one another through collapse and longing, revealing the struggles and dilemmas women face over their own bodies and lives under traditional expectations of motherhood and social pressure.",
-      "When society has already imposed its framework, can women truly decide for their own bodies and lives?"
-    ],
-    img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg",
-    link: "https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E6%B0%B4%E7%AE%A1%E5%AC%B0%E5%85%92-btb?authuser=0"
-  },
-  {
-    title: "透明的孩子",
-    tagline: "THE WINGLESS CHILD",
-    zh: [
-      "有些人活著，卻從未被看見。",
-      "無國籍男孩 Evan，在被遺棄與忽視中成長，渴望被命名、被記住。直到他遇見同樣失去至親的大體化妝師靜瀾，兩個孤獨的靈魂短暫相依，卻終將被命運分開。",
-      "當世界選擇忽視，你還相信自己的存在嗎？"
-    ],
-    en: [
-      "Some people live, yet remain unseen.",
-      "Evan, a stateless boy raised in abandonment and neglect, yearns to be named and remembered. His path crosses with Jing-lan, a mortician who has also lost her loved ones. Two lonely souls find brief solace in each other, only to be eventually torn apart by fate.",
-      "When the world chooses to ignore you, do you still believe in your own existence?"
-    ],
-    img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg",
-    link: "https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E9%80%8F%E6%98%8E%E7%9A%84%E5%AD%A9%E5%AD%90-twc?authuser=0"
-  },
-  {
-    title: "煙燻屋",
-    tagline: "THROUGH THE SMOKE",
-    zh: [
-      "有些距離，不只是時間，而是說不出口的過去。",
-      "瑞恩在多年離家後重返新加坡，面對與父親未解的心結。在煙霧瀰漫的記憶與信仰之中，她試圖透過影像梳理過去，也重新尋找自己的人生方向。",
-      "當記憶無法散去，你是否還有勇氣回頭面對？"
-    ],
-    en: [
-      "Some distances are measured not in time, but in the pasts that remain unspoken.",
-      "After years away, Rayne returns to Singapore to confront the unresolved tension with her father. Amidst the swirling haze of memory and faith, she seeks to untangle the past through her lens, searching for a new direction in life.",
-      "When memories refuse to fade, do you still have the courage to turn back and face them?"
-    ],
-    img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png",
-    link: "https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%85%99%E7%87%BB%E5%B1%8B-tts?authuser=0"
-  },
-  {
-    title: "真話",
-    tagline: "MAKOTO",
-    zh: [
-      "有些謊言，是為了讓人繼續被愛。",
-      "東雲眞在父親失去記憶後，透過「出租家族」重現母親的身影，卻在過程中逐漸看見被隱藏的真相。眼見未必為真，真相或許從不在眼前，而在心裡。",
-      "當虛假的關係承載真實的情感，愛，是否仍然成立？"
-    ],
-    en: [
-      "Some lies are told so that one may continue to be loved.",
-      "After his father loses his memory, Shin-on-ma reconstructs his mother’s presence through a \"Rental Family\" service, only to gradually uncover the truths hidden beneath. What is seen may not be real; the truth perhaps resides not before our eyes, but within our hearts.",
-      "When a fabricated relationship carries genuine emotion, does love still hold true?"
-    ],
-    img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260326_zh_poster_v01.jpg",
-    link: "https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%9C%9F%E8%A9%B1-som?authuser=0"
-  },
-  {
-    title: "瘋籠",
-    tagline: "THE MAD CAGE",
-    zh: [
-      "有些人逃出了牢籠，卻從未真正自由。",
-      "王俊熙因童年創傷患上 PTSD，在一次失控後被送入精神病院，卻意外揭開院內利用病人情緒進行實驗的秘密。他試圖逃離，卻在付出慘痛代價後發現，外面的世界，早已沉溺於一場被設計好的情感幻覺之中。",
-      "當虛假的溫柔更容易被接受，真實還重要嗎？"
-    ],
-    en: [
-      "Some escape the cage, yet never find true freedom.",
-      "Haunted by childhood trauma and PTSD, Wang Jun-xi is institutionalized after a breakdown, only to uncover a chilling secret: the asylum is experimenting on patients' emotions. As he fights to escape at a devastating cost, he realizes the world outside has already succumbed to a designed emotional hallucination.",
-      "When a fabricated tenderness is easier to embrace, does the truth still matter?"
-    ],
-    img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/main/%E6%B5%B7%E5%A0%B1/%E3%80%8A%E7%98%8B%E7%B1%A0%E3%80%8BPOSTER.JPG",
-    link: "https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%98%8B%E7%B1%A0-tmc?authuser=0"
-  }
+const data = [
+{
+title:"水管嬰兒",
+tag:"BLOOD TUBE BABY",
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg",
+link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E6%B0%B4%E7%AE%A1%E5%AC%B0%E5%85%92-btb?authuser=0",
+zh:"有些痛，不在身體，而在被迫承受的「意義」。當社會早已設下框架，女性是否真的能決定自己的身體與生命？",
+en:"Some pain does not reside in the body, but in the meaning one is forced to bear. Can women truly decide for their own bodies?"
+},
+
+{
+title:"透明的孩子",
+tag:"THE WINGLESS CHILD",
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg",
+link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E9%80%8F%E6%98%8E%E7%9A%84%E5%AD%A9%E5%AD%90-twc?authuser=0",
+zh:"有些人活著，卻從未被看見。",
+en:"Some people live, yet remain unseen."
+},
+
+{
+title:"煙燻屋",
+tag:"THROUGH THE SMOKE",
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png",
+link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%85%99%E7%87%BB%E5%B1%8B-tts?authuser=0",
+zh:"有些距離，不只是時間，而是說不出口的過去。",
+en:"Some distances are not time, but unspoken pasts."
+},
+
+{
+title:"真話",
+tag:"MAKOTO",
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260326_zh_poster_v01.jpg",
+link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%9C%9F%E8%A9%B1-som?authuser=0",
+zh:"有些謊言，是為了讓人繼續被愛。",
+en:"Some lies are told so one may continue to be loved."
+},
+
+{
+title:"瘋籠",
+tag:"THE MAD CAGE",
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/main/%E6%B5%B7%E5%A0%B1/%E3%80%8A%E7%98%8B%E7%B1%A0%E3%80%8BPOSTER.JPG",
+link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%98%8B%E7%B1%A0-tmc?authuser=0",
+zh:"有些人逃出了牢籠，卻從未真正自由。",
+en:"Some escape the cage, yet never find freedom."
+}
 ];
 
 const gallery = document.getElementById("gallery");
 
-posterData.forEach((item, index) => {
-  const zhHtml = item.zh.map((text, i) =>
-    `<p class="zh ${i === item.zh.length - 1 ? 'question' : ''}">${text}</p>`
-  ).join("");
+data.forEach((item,i)=>{
 
-  const enHtml = item.en.map((text, i) =>
-    `<p class="en ${i === item.en.length - 1 ? 'question' : ''}">${text}</p>`
-  ).join("");
+const el = document.createElement("div");
+el.innerHTML = `
+<div class="poster-card">
+<img src="${item.img}">
 
-  const article = document.createElement("article");
-  article.innerHTML = `
-    <div class="poster-card" tabindex="0" aria-label="${item.title}">
-      <div class="poster-media">
-        <img src="${item.img}" alt="${item.title}">
-      </div>
+<div class="poster-info">
+<h2 class="poster-title">${item.title}</h2>
+<div class="poster-tagline">${item.tag}</div>
 
-      <div class="poster-info">
-        <div class="pill">Featured · ${String(index + 1).padStart(2, "0")}</div>
-        <h2 class="poster-title">${item.title}</h2>
-        <p class="poster-tagline">${item.tagline}</p>
+<div class="lang-switch">
+<button class="lang-btn active" data-lang="zh">中文</button>
+<button class="lang-btn" data-lang="en">English</button>
+</div>
 
-        <div class="poster-copy">
-          ${zhHtml}
-          ${enHtml}
-        </div>
+<div class="text zh">${item.zh}</div>
+<div class="text en hidden">${item.en}</div>
 
-        <div class="poster-actions">
-          <a class="poster-btn primary" href="${item.link}" target="_top" rel="noopener">
-            View Full Page
-          </a>
-        </div>
-      </div>
-    </div>
-  `;
+<a class="poster-btn" href="${item.link}" target="_top">View Full Page</a>
+</div>
+</div>
+`;
 
-  const card = article.querySelector(".poster-card");
-  const img = article.querySelector(".poster-media img");
+const card = el.querySelector(".poster-card");
+const zh = el.querySelector(".zh");
+const en = el.querySelector(".en");
+const btns = el.querySelectorAll(".lang-btn");
 
-  card.addEventListener("mousemove", (e) => {
-    if (window.matchMedia("(hover: none)").matches) return;
+btns.forEach(btn=>{
+btn.onclick=()=>{
+btns.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
 
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const xc = rect.width / 2;
-    const yc = rect.height / 2;
-    const dx = (x - xc) / xc;
-    const dy = (y - yc) / yc;
+if(btn.dataset.lang==="zh"){
+zh.classList.remove("hidden");
+en.classList.add("hidden");
+}else{
+en.classList.remove("hidden");
+zh.classList.add("hidden");
+}
+}
+});
 
-    const rotateY = dx * 4.2;
-    const rotateX = -dy * 4.2;
+gallery.appendChild(el);
 
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.003)`;
-    img.style.transform = `scale(1.05) translateX(${dx * 8}px) translateY(${dy * 8}px)`;
-  });
-
-  card.addEventListener("mouseleave", () => {
-    card.style.transform = "";
-    img.style.transform = "scale(1.03)";
-  });
-
-  gallery.appendChild(article);
 });
 </script>
 
