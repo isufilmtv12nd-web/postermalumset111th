@@ -9,14 +9,14 @@
 * { box-sizing: border-box; }
 
 :root{
-  --bg:#050505;
-  --card-border:rgba(255,255,255,0.10);
-  --glass:rgba(20,20,20,0.34);
-  --glass-strong:rgba(12,12,12,0.48);
   --text:#ffffff;
-  --sub:rgba(255,255,255,0.72);
-  --muted:rgba(255,255,255,0.52);
-  --shadow:0 24px 60px rgba(0,0,0,0.42);
+  --sub:rgba(255,255,255,0.76);
+  --muted:rgba(255,255,255,0.54);
+  --line:rgba(255,255,255,0.10);
+  --glass:rgba(18,18,18,0.32);
+  --glass-strong:rgba(10,10,10,0.48);
+  --pill:rgba(255,255,255,0.10);
+  --shadow:0 22px 60px rgba(0,0,0,0.32);
   --radius:28px;
 }
 
@@ -24,107 +24,66 @@ html, body{
   margin:0;
   padding:0;
   width:100%;
-  min-height:100%;
-  background:var(--bg);
+  height:100%;
+  background:transparent;
   color:var(--text);
   font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", "Noto Sans TC", sans-serif;
-  overflow-x:hidden;
+  overflow:hidden; /* 重點：避免自己的頁面再出滑桿 */
 }
 
 body{
-  position:relative;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(255,255,255,0.06), transparent 26%),
-    radial-gradient(circle at 80% 10%, rgba(255,255,255,0.04), transparent 22%),
-    linear-gradient(180deg, #0a0a0a 0%, #040404 100%);
+  background:transparent; /* 重點：透明背景 */
 }
 
-/* 頂部 */
-.hero{
-  width:min(1120px, calc(100% - 28px));
-  margin:0 auto;
-  padding:34px 0 20px;
+/* 外層 */
+.stage-wrap{
+  width:100%;
+  height:100%;
+  padding:8px;
+  background:transparent;
 }
 
-.hero-kicker{
-  font-size:11px;
-  letter-spacing:0.24em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-bottom:10px;
-}
-
-.hero-title{
-  margin:0;
-  font-size:clamp(30px, 5vw, 56px);
-  font-weight:700;
-  letter-spacing:-0.04em;
-  line-height:1.02;
-}
-
-.hero-sub{
-  margin:12px 0 0;
-  font-size:clamp(14px, 2vw, 17px);
-  line-height:1.7;
-  color:var(--sub);
-  max-width:700px;
-}
-
-/* 直式清單 */
-.gallery{
-  width:min(1120px, calc(100% - 28px));
-  margin:0 auto;
-  padding:8px 0 54px;
-  display:grid;
-  grid-template-columns:1fr;
-  gap:22px;
-}
-
-/* 卡片 */
-.poster-card{
+/* 主舞台 */
+.stage{
   position:relative;
   width:100%;
-  min-height:78svh;
-  height:78svh;
-  max-height:980px;
-  border-radius:var(--radius);
+  max-width:1200px;
+  height:min(860px, calc(100vh - 16px));
+  min-height:680px;
+  margin:0 auto;
+  border-radius:30px;
   overflow:hidden;
-  border:1px solid var(--card-border);
-  background:#0b0b0b;
+  background:rgba(0,0,0,0.10);
+  border:1px solid rgba(255,255,255,0.10);
+  backdrop-filter:blur(18px) saturate(118%);
+  -webkit-backdrop-filter:blur(18px) saturate(118%);
   box-shadow:var(--shadow);
-  transform-style:preserve-3d;
-  perspective:1200px;
-  will-change:transform;
-  transition:
-    transform 0.24s ease,
-    box-shadow 0.24s ease,
-    border-color 0.24s ease;
   isolation:isolate;
+  transform-style:preserve-3d;
+  perspective:1400px;
+  will-change:transform;
+  transition:transform .24s ease;
 }
 
-.poster-card:hover{
-  border-color:rgba(255,255,255,0.16);
-  box-shadow:0 34px 75px rgba(0,0,0,0.5);
-}
-
-.poster-media{
+/* 海報背景 */
+.poster-bg{
   position:absolute;
   inset:0;
   overflow:hidden;
 }
 
-.poster-media img{
+.poster-bg img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
-  transform:scale(1.02);
-  transition:transform 0.28s ease;
+  transform:scale(1.03);
+  transition:transform .28s ease;
   backface-visibility:hidden;
 }
 
 /* 電影感暗層 */
-.poster-card::before{
+.stage::before{
   content:"";
   position:absolute;
   inset:0;
@@ -133,12 +92,12 @@ body{
   background:
     linear-gradient(180deg,
       rgba(0,0,0,0.08) 0%,
-      rgba(0,0,0,0.02) 24%,
-      rgba(0,0,0,0.16) 56%,
+      rgba(0,0,0,0.04) 20%,
+      rgba(0,0,0,0.14) 50%,
       rgba(0,0,0,0.82) 100%);
 }
 
-.poster-card::after{
+.stage::after{
   content:"";
   position:absolute;
   inset:0;
@@ -146,291 +105,269 @@ body{
   pointer-events:none;
   background:
     radial-gradient(circle at 50% 14%, rgba(255,255,255,0.12), transparent 24%),
-    linear-gradient(120deg, rgba(255,255,255,0.07), transparent 25%, transparent 70%, rgba(255,255,255,0.04));
+    linear-gradient(120deg, rgba(255,255,255,0.07), transparent 24%, transparent 74%, rgba(255,255,255,0.04));
   mix-blend-mode:screen;
-  opacity:0.28;
+  opacity:.28;
 }
 
-/* 底部字幕條 */
-.poster-info{
+/* 頂部資訊 */
+.topbar{
   position:absolute;
-  left:18px;
-  right:18px;
-  bottom:18px;
-  z-index:3;
-  padding:16px 16px 15px;
-  border-radius:20px;
-  background:linear-gradient(180deg, var(--glass), var(--glass-strong));
+  top:14px;
+  left:14px;
+  right:14px;
+  z-index:4;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.brand,
+.counter{
+  display:inline-flex;
+  align-items:center;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.24);
+  border:1px solid rgba(255,255,255,0.10);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  color:rgba(255,255,255,0.88);
+}
+
+.brand{
+  font-size:11px;
+  letter-spacing:.20em;
+  text-transform:uppercase;
+}
+
+.counter{
+  font-size:12px;
+}
+
+/* 左右切換 */
+.nav{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+}
+
+.nav-btn{
+  pointer-events:auto;
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:52px;
+  height:52px;
+  border-radius:999px;
   border:1px solid rgba(255,255,255,0.12);
+  background:rgba(0,0,0,0.26);
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  transition:transform .2s ease, background .2s ease, opacity .2s ease;
+}
+
+.nav-btn:hover{
+  transform:translateY(-50%) scale(1.04);
+}
+
+.nav-btn.prev{ left:14px; }
+.nav-btn.next{ right:14px; }
+
+/* 底部玻璃資訊 */
+.info{
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  z-index:4;
+  padding:16px;
+  border-radius:22px;
+  background:linear-gradient(180deg, var(--glass), var(--glass-strong));
+  border:1px solid var(--line);
   backdrop-filter:blur(18px) saturate(120%);
   -webkit-backdrop-filter:blur(18px) saturate(120%);
   box-shadow:0 10px 28px rgba(0,0,0,0.24);
   transform:translateZ(34px);
 }
 
-.caption-pill{
+.pill{
   display:inline-flex;
   align-items:center;
-  max-width:100%;
   padding:7px 12px;
   border-radius:999px;
-  background:rgba(255,255,255,0.10);
+  background:var(--pill);
   border:1px solid rgba(255,255,255,0.08);
   font-size:10px;
-  letter-spacing:0.20em;
+  letter-spacing:.18em;
   text-transform:uppercase;
   color:rgba(255,255,255,0.86);
   margin-bottom:12px;
 }
 
-.poster-title{
+.title{
   margin:0;
-  font-size:clamp(28px, 4.4vw, 46px);
+  font-size:clamp(28px, 4vw, 46px);
   line-height:1.02;
-  letter-spacing:-0.04em;
   font-weight:700;
-  text-shadow:0 2px 18px rgba(0,0,0,0.26);
+  letter-spacing:-0.04em;
+  text-shadow:0 2px 18px rgba(0,0,0,0.22);
 }
 
-.poster-tagline{
+.tagline{
   margin:8px 0 0;
   font-size:12px;
-  letter-spacing:0.20em;
+  letter-spacing:.20em;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.68);
+  color:rgba(255,255,255,0.70);
 }
 
-.poster-synopsis{
+.summary{
   margin:12px 0 0;
-  max-width:760px;
+  max-width:900px;
   font-size:14px;
-  line-height:1.72;
-  color:rgba(255,255,255,0.90);
+  line-height:1.68;
+  color:rgba(255,255,255,0.92);
 }
 
-.poster-actions{
-  margin-top:14px;
+/* tabs */
+.tabs{
+  margin-top:16px;
   display:flex;
-  gap:10px;
+  gap:8px;
   flex-wrap:wrap;
 }
 
-.poster-btn{
+.tab-btn{
   appearance:none;
-  border:0;
-  text-decoration:none;
-  cursor:pointer;
-  padding:11px 16px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.08);
+  color:#fff;
+  padding:10px 14px;
   border-radius:999px;
-  font-size:13px;
-  transition:transform .2s ease, opacity .2s ease, background .2s ease;
+  font-size:12px;
+  cursor:pointer;
+  transition:background .2s ease, transform .2s ease;
 }
 
-.poster-btn.primary{
+.tab-btn.active{
   background:#fff;
   color:#111;
   font-weight:600;
 }
 
-.poster-btn.secondary{
-  background:rgba(255,255,255,0.12);
-  color:#fff;
-  border:1px solid rgba(255,255,255,0.10);
-}
-
-.poster-btn:hover{
+.tab-btn:hover{
   transform:translateY(-1px);
 }
 
-/* modal */
-.viewer-overlay{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  background:rgba(0,0,0,0.78);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  opacity:0;
-  transition:opacity .28s ease;
+/* 內文區 */
+.detail-wrap{
+  margin-top:14px;
+  max-width:920px;
 }
 
-.viewer-overlay.active{
-  display:flex;
-  opacity:1;
+.detail{
+  font-size:14px;
+  line-height:1.72;
+  color:rgba(255,255,255,0.92);
 }
 
-.viewer-dialog{
-  width:min(1140px, 100%);
-  max-height:92svh;
-  overflow:auto;
-  border-radius:26px;
-  background:rgba(16,16,16,0.92);
-  border:1px solid rgba(255,255,255,0.10);
-  box-shadow:0 22px 60px rgba(0,0,0,0.5);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
+.detail p{
+  margin:0 0 1em;
 }
 
-.viewer-grid{
-  display:grid;
-  grid-template-columns:1.02fr 0.98fr;
-  min-height:620px;
-}
-
-.viewer-media{
-  min-height:400px;
-  background:#0b0b0b;
-}
-
-.viewer-media img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.viewer-content{
-  padding:28px 24px 24px;
-}
-
-.viewer-close{
-  appearance:none;
-  border:0;
-  background:rgba(255,255,255,0.10);
-  color:#fff;
-  width:42px;
-  height:42px;
-  border-radius:999px;
-  cursor:pointer;
-  font-size:18px;
-  line-height:1;
-  float:right;
-}
-
-.viewer-label{
-  clear:both;
-  padding-top:10px;
-  font-size:11px;
-  letter-spacing:0.22em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.55);
-}
-
-.viewer-title{
-  margin:10px 0 8px;
-  font-size:clamp(30px, 4vw, 44px);
-  line-height:1.04;
-  letter-spacing:-0.04em;
-}
-
-.viewer-tagline{
-  margin:0 0 18px;
-  font-size:12px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.68);
-}
-
-.viewer-text{
-  font-size:15px;
-  line-height:1.9;
-  color:rgba(255,255,255,0.9);
-}
-
-.viewer-text p{
-  margin:0 0 1.1em;
-}
-
-.viewer-text .zh{
-  color:rgba(255,255,255,0.95);
-}
-
-.viewer-text .en{
-  color:rgba(255,255,255,0.80);
-}
-
-.viewer-text .question{
-  margin-top:1.4em;
+.detail .question{
   font-weight:600;
   color:#fff;
 }
 
-/* 手機版 */
+.hidden{
+  display:none;
+}
+
+/* 手機 */
 @media (max-width: 767px){
-  .hero{
-    width:calc(100% - 20px);
-    padding:24px 0 14px;
+  html, body{
+    height:100%;
   }
 
-  .gallery{
-    width:calc(100% - 20px);
-    gap:16px;
-    padding-bottom:28px;
+  .stage-wrap{
+    padding:6px;
   }
 
-  .poster-card{
-    height:82svh;
+  .stage{
+    height:calc(100vh - 12px);
     min-height:640px;
-    border-radius:24px;
-  }
-
-  .poster-info{
-    left:12px;
-    right:12px;
-    bottom:12px;
-    padding:14px 14px 13px;
-    border-radius:18px;
-  }
-
-  .caption-pill{
-    margin-bottom:10px;
-    font-size:9px;
-    letter-spacing:0.18em;
-  }
-
-  .poster-title{
-    font-size:30px;
-  }
-
-  .poster-tagline{
-    font-size:11px;
-    letter-spacing:0.15em;
-  }
-
-  .poster-synopsis{
-    font-size:13px;
-    line-height:1.66;
-  }
-
-  .viewer-dialog{
-    max-height:94svh;
     border-radius:22px;
   }
 
-  .viewer-grid{
-    grid-template-columns:1fr;
+  .topbar{
+    top:10px;
+    left:10px;
+    right:10px;
   }
 
-  .viewer-media{
-    min-height:45svh;
+  .brand,
+  .counter{
+    padding:8px 12px;
+    font-size:10px;
   }
 
-  .viewer-content{
-    padding:20px 16px 20px;
+  .nav-btn{
+    width:42px;
+    height:42px;
+    font-size:18px;
   }
 
-  .viewer-text{
-    font-size:14px;
-    line-height:1.8;
+  .nav-btn.prev{ left:10px; }
+  .nav-btn.next{ right:10px; }
+
+  .info{
+    left:10px;
+    right:10px;
+    bottom:10px;
+    padding:14px;
+    border-radius:18px;
+  }
+
+  .pill{
+    font-size:9px;
+    margin-bottom:10px;
+  }
+
+  .title{
+    font-size:30px;
+  }
+
+  .tagline{
+    font-size:11px;
+    letter-spacing:.14em;
+  }
+
+  .summary{
+    font-size:13px;
+    line-height:1.6;
+  }
+
+  .detail{
+    font-size:13px;
+    line-height:1.62;
+  }
+
+  .tab-btn{
+    padding:9px 12px;
+    font-size:11px;
   }
 }
 
+/* 無 hover 裝置就不要硬 tilt */
 @media (hover: none){
-  .poster-card{
+  .stage{
     transform:none !important;
   }
 }
@@ -438,29 +375,39 @@ body{
 </head>
 <body>
 
-<section class="hero">
-  <div class="hero-kicker">Now Showing</div>
-  <h1 class="hero-title">Featured Poster Collection</h1>
-  <p class="hero-sub">Netflix 的大圖電影感，加上 Apple TV 式的乾淨玻璃 UI。直向滑動、手機穩定、Google Sites 友善，並支援中英雙語內文。</p>
-</section>
+<div class="stage-wrap">
+  <section class="stage" id="stage">
+    <div class="poster-bg">
+      <img id="posterImage" src="" alt="">
+    </div>
 
-<section class="gallery" id="gallery"></section>
+    <div class="topbar">
+      <div class="brand">Featured Poster</div>
+      <div class="counter" id="counter">01 / 05</div>
+    </div>
 
-<div class="viewer-overlay" id="viewerOverlay" aria-hidden="true">
-  <div class="viewer-dialog">
-    <div class="viewer-grid">
-      <div class="viewer-media">
-        <img id="modalImg" src="" alt="">
+    <div class="nav">
+      <button class="nav-btn prev" id="prevBtn" aria-label="Previous">‹</button>
+      <button class="nav-btn next" id="nextBtn" aria-label="Next">›</button>
+    </div>
+
+    <div class="info">
+      <div class="pill" id="pill">Now Showing</div>
+      <h1 class="title" id="title"></h1>
+      <p class="tagline" id="tagline"></p>
+      <p class="summary" id="summary"></p>
+
+      <div class="tabs">
+        <button class="tab-btn active" id="tabZh" type="button">中文</button>
+        <button class="tab-btn" id="tabEn" type="button">English</button>
       </div>
-      <div class="viewer-content">
-        <button class="viewer-close" onclick="closeModal()" aria-label="Close">×</button>
-        <div class="viewer-label">Featured Title</div>
-        <h2 class="viewer-title" id="modalTitle"></h2>
-        <p class="viewer-tagline" id="modalTagline"></p>
-        <div class="viewer-text" id="modalSynopsis"></div>
+
+      <div class="detail-wrap">
+        <div class="detail" id="detailZh"></div>
+        <div class="detail hidden" id="detailEn"></div>
       </div>
     </div>
-  </div>
+  </section>
 </div>
 
 <script>
@@ -468,179 +415,176 @@ const posterData = [
   {
     title: "水管嬰兒",
     tagline: "BLOOD TUBE BABY",
-    detail: `
-      <p class="zh">有些痛，不在身體，而在被迫承受的「意義」。</p>
-      <p class="zh">林婉霏因創傷逃避面對腹中生命，林淑儀因不孕將想像的孩子視為唯一救贖。現實與幻象交錯，她們的生命在崩解與渴望中互相映照，也揭示了在傳統生育觀念與社會期待下，女性對自己身體與生命的掙扎與困境。</p>
-      <p class="zh question">當社會早已設下框架，女性，是否真的能決定自己的身體與生命？</p>
-
-      <p class="en">Some pain does not reside in the body, but in the meaning one is forced to bear.</p>
-      <p class="en">Haunted by trauma, Lin Wan-fei avoids confronting the life growing within her. Lin Shu-yi, meanwhile, struggles with infertility and clings to an imagined child as her only salvation. As reality and illusion intertwine, their lives mirror one another through collapse and longing, revealing the struggles and dilemmas women face over their own bodies and lives under traditional expectations of motherhood and social pressure.</p>
-      <p class="en question">When society has already imposed its framework, can women truly decide for their own bodies and lives?</p>
+    summary: "在廢棄的地下管網中，一個非法的生命實驗悄然甦醒。",
+    zh: `
+      <p>有些痛，不在身體，而在被迫承受的「意義」。</p>
+      <p>林婉霏因創傷逃避面對腹中生命，林淑儀因不孕將想像的孩子視為唯一救贖。現實與幻象交錯，她們的生命在崩解與渴望中互相映照，也揭示了在傳統生育觀念與社會期待下，女性對自己身體與生命的掙扎與困境。</p>
+      <p class="question">當社會早已設下框架，女性，是否真的能決定自己的身體與生命？</p>
+    `,
+    en: `
+      <p>Some pain does not reside in the body, but in the meaning one is forced to bear.</p>
+      <p>Haunted by trauma, Lin Wan-fei avoids confronting the life growing within her. Lin Shu-yi, meanwhile, struggles with infertility and clings to an imagined child as her only salvation. As reality and illusion intertwine, their lives mirror one another through collapse and longing, revealing the struggles and dilemmas women face over their own bodies and lives under traditional expectations of motherhood and social pressure.</p>
+      <p class="question">When society has already imposed its framework, can women truly decide for their own bodies and lives?</p>
     `,
     img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg"
   },
   {
     title: "透明的孩子",
     tagline: "THE WINGLESS CHILD",
-    detail: `
-      <p class="zh">有些人活著，卻從未被看見。</p>
-      <p class="zh">無國籍男孩 Evan，在被遺棄與忽視中成長，渴望被命名、被記住。直到他遇見同樣失去至親的大體化妝師靜瀾，兩個孤獨的靈魂短暫相依，卻終將被命運分開。</p>
-      <p class="zh">當世界選擇忽視，你還相信自己的存在嗎？</p>
-      
-      <p class="en">Some people live, yet remain unseen.</p>
-      <p class="en">Evan, a stateless boy raised in abandonment and neglect, yearns to be named and remembered. His path crosses with Jing-lan, a mortician who has also lost her loved ones. Two lonely souls find brief solace in each other, only to be eventually torn apart by fate.</p>
-      <p class="en">When the world chooses to ignore you, do you still believe in your own existence?</p>
+    summary: "有些人活著，卻從未被看見。",
+    zh: `
+      <p>有些人活著，卻從未被看見。</p>
+      <p>無國籍男孩 Evan，在被遺棄與忽視中成長，渴望被命名、被記住。直到他遇見同樣失去至親的大體化妝師靜瀾，兩個孤獨的靈魂短暫相依，卻終將被命運分開。</p>
+      <p class="question">當世界選擇忽視，你還相信自己的存在嗎？</p>
+    `,
+    en: `
+      <p>Some people live, yet remain unseen.</p>
+      <p>Evan, a stateless boy raised in abandonment and neglect, yearns to be named and remembered. His path crosses with Jing-lan, a mortician who has also lost her loved ones. Two lonely souls find brief solace in each other, only to be eventually torn apart by fate.</p>
+      <p class="question">When the world chooses to ignore you, do you still believe in your own existence?</p>
     `,
     img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg"
   },
   {
     title: "真話",
     tagline: "MAKOTO",
-    detail: `
-      <p class="zh">有些謊言，是為了讓人繼續被愛。</p>
-      <p class="zh">東雲眞在父親失去記憶後，透過「出租家族」重現母親的身影，卻在過程中逐漸看見被隱藏的真相。眼見未必為真，真相或許從不在眼前，而在心裡。</p>
-      <p class="zh">當虛假的關係承載真實的情感，愛，是否仍然成立？</p>
-
-      <p class="en">Some lies are told so that one may continue to be loved.</p>
-      <p class="en">After his father loses his memory, Shin-on-ma reconstructs his mother’s presence through a "Rental Family" service, only to gradually uncover the truths hidden beneath. What is seen may not be real; the truth perhaps resides not before our eyes, but within our hearts.</p>
-      <p class="en">When a fabricated relationship carries genuine emotion, does love still hold true?</p>
+    summary: "有些謊言，是為了讓人繼續被愛。",
+    zh: `
+      <p>有些謊言，是為了讓人繼續被愛。</p>
+      <p>東雲眞在父親失去記憶後，透過「出租家族」重現母親的身影，卻在過程中逐漸看見被隱藏的真相。眼見未必為真，真相或許從不在眼前，而在心裡。</p>
+      <p class="question">當虛假的關係承載真實的情感，愛，是否仍然成立？</p>
+    `,
+    en: `
+      <p>Some lies are told so that one may continue to be loved.</p>
+      <p>After his father loses his memory, Shin-on-ma reconstructs his mother’s presence through a "Rental Family" service, only to gradually uncover the truths hidden beneath. What is seen may not be real; the truth perhaps resides not before our eyes, but within our hearts.</p>
+      <p class="question">When a fabricated relationship carries genuine emotion, does love still hold true?</p>
     `,
     img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260326_zh_poster_v01.jpg"
   },
   {
-    title: "烟熏屋",
+    title: "煙燻屋",
     tagline: "THROUGH THE SMOKE",
-    detail: `
-      <p class="zh">有些距離，不只是時間，而是說不出口的過去。</p>
-      <p class="zh">瑞恩在多年離家後重返新加坡，面對與父親未解的心結。在煙霧瀰漫的記憶與信仰之中，她試圖透過影像梳理過去，也重新尋找自己的人生方向。</p>
-      <p class="zh">當記憶無法散去，你是否還有勇氣回頭面對？</p>
-      
-      <p class="en">Some distances are measured not in time, but in the pasts that remain unspoken.</p>
-      <p class="en">After years away, Rayne returns to Singapore to confront the unresolved tension with her father. Amidst the swirling haze of memory and faith, she seeks to untangle the past through her lens, searching for a new direction in life.</p>
-      <p class="en">When memories refuse to fade, do you still believe in your own existence?</p>
+    summary: "有些距離，不只是時間，而是說不出口的過去。",
+    zh: `
+      <p>有些距離，不只是時間，而是說不出口的過去。</p>
+      <p>瑞恩在多年離家後重返新加坡，面對與父親未解的心結。在煙霧瀰漫的記憶與信仰之中，她試圖透過影像梳理過去，也重新尋找自己的人生方向。</p>
+      <p class="question">當記憶無法散去，你是否還有勇氣回頭面對？</p>
+    `,
+    en: `
+      <p>Some distances are measured not in time, but in the pasts that remain unspoken.</p>
+      <p>After years away, Rayne returns to Singapore to confront the unresolved tension with her father. Amidst the swirling haze of memory and faith, she seeks to untangle the past through her lens, searching for a new direction in life.</p>
+      <p class="question">When memories refuse to fade, do you still have the courage to turn back and face them?</p>
     `,
     img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png"
   },
   {
     title: "瘋籠",
     tagline: "THE MAD CAGE",
-    detail: `
-      <p class="zh"> 有些人逃出了牢籠，卻從未真正自由。</p>
-      <p class="zh">王俊熙因童年創傷患上 PTSD，在一次失控後被送入精神病院，卻意外揭開院內利用病人情緒進行實驗的秘密。他試圖逃離，卻在付出慘痛代價後發現，外面的世界，早已沉溺於一場被設計好的情感幻覺之中。</p>
-      <p class="zh">當虛假的溫柔更容易被接受，真實還重要嗎？</p>
-      
-      <p class="en">Some escape the cage, yet never find true freedom.</p>
-      <p class="en">Haunted by childhood trauma and PTSD, Wang Jun-xi is institutionalized after a breakdown, only to uncover a chilling secret: the asylum is experimenting on patients' emotions. As he fights to escape at a devastating cost, he realizes the world outside has already succumbed to a designed emotional hallucination.</p>
-      <p class="en">When a fabricated tenderness is easier to embrace, does the truth still matter?</p>
+    summary: "有些人逃出了牢籠，卻從未真正自由。",
+    zh: `
+      <p>有些人逃出了牢籠，卻從未真正自由。</p>
+      <p>王俊熙因童年創傷患上 PTSD，在一次失控後被送入精神病院，卻意外揭開院內利用病人情緒進行實驗的秘密。他試圖逃離，卻在付出慘痛代價後發現，外面的世界，早已沉溺於一場被設計好的情感幻覺之中。</p>
+      <p class="question">當虛假的溫柔更容易被接受，真實還重要嗎？</p>
+    `,
+    en: `
+      <p>Some escape the cage, yet never find true freedom.</p>
+      <p>Haunted by childhood trauma and PTSD, Wang Jun-xi is institutionalized after a breakdown, only to uncover a chilling secret: the asylum is experimenting on patients' emotions. As he fights to escape at a devastating cost, he realizes the world outside has already succumbed to a designed emotional hallucination.</p>
+      <p class="question">When a fabricated tenderness is easier to embrace, does the truth still matter?</p>
     `,
     img: "https://raw.githubusercontent.com/isufilmtv12nd-web/testing/main/%E6%B5%B7%E5%A0%B1/%E3%80%8A%E7%98%8B%E7%B1%A0%E3%80%8BPOSTER.JPG"
   }
 ];
 
-const gallery = document.getElementById("gallery");
-const overlay = document.getElementById("viewerOverlay");
+let currentIndex = 0;
+let currentLang = "zh";
 
-posterData.forEach((item, index) => {
-  const article = document.createElement("article");
-  article.innerHTML = `
-    <div class="poster-card" tabindex="0" aria-label="${item.title}">
-      <div class="poster-media">
-        <img src="${item.img}" alt="${item.title}">
-      </div>
+const stage = document.getElementById("stage");
+const posterImage = document.getElementById("posterImage");
+const counter = document.getElementById("counter");
+const title = document.getElementById("title");
+const tagline = document.getElementById("tagline");
+const summary = document.getElementById("summary");
+const detailZh = document.getElementById("detailZh");
+const detailEn = document.getElementById("detailEn");
+const tabZh = document.getElementById("tabZh");
+const tabEn = document.getElementById("tabEn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
 
-      <div class="poster-info">
-        <div class="caption-pill">Featured · ${String(index + 1).padStart(2, "0")}</div>
-        <h2 class="poster-title">${item.title}</h2>
-        <p class="poster-tagline">${item.tagline}</p>
-        <p class="poster-synopsis">${item.synopsis}</p>
-        <div class="poster-actions">
-          <button class="poster-btn primary" type="button">View Details</button>
-          <button class="poster-btn secondary" type="button">More Info</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const card = article.querySelector(".poster-card");
-  const img = article.querySelector(".poster-media img");
-  const buttons = article.querySelectorAll(".poster-btn");
-
-  card.addEventListener("mousemove", (e) => {
-    if (window.matchMedia("(hover: none)").matches) return;
-
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const xc = rect.width / 2;
-    const yc = rect.height / 2;
-    const dx = (x - xc) / xc;
-    const dy = (y - yc) / yc;
-
-    const rotateY = dx * 6.5;
-    const rotateX = -dy * 6.5;
-
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px) scale(1.008)`;
-    img.style.transform = `scale(1.045) translateX(${dx * 7}px) translateY(${dy * 7}px)`;
-  });
-
-  card.addEventListener("mouseleave", () => {
-    card.style.transform = "";
-    img.style.transform = "scale(1.02)";
-  });
-
-  const open = () => openModal(item);
-
-  card.addEventListener("click", open);
-  card.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      open();
-    }
-  });
-
-  buttons.forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      open();
-    });
-  });
-
-  gallery.appendChild(article);
-});
-
-function openModal(data){
-  document.getElementById("modalImg").src = data.img;
-  document.getElementById("modalImg").alt = data.title;
-  document.getElementById("modalTitle").textContent = data.title;
-  document.getElementById("modalTagline").textContent = data.tagline;
-  document.getElementById("modalSynopsis").innerHTML = data.detail;
-
-  overlay.style.display = "flex";
-  requestAnimationFrame(() => {
-    overlay.classList.add("active");
-    overlay.setAttribute("aria-hidden", "false");
-  });
-  document.body.style.overflow = "hidden";
+function renderPoster(index){
+  const item = posterData[index];
+  posterImage.src = item.img;
+  posterImage.alt = item.title;
+  title.textContent = item.title;
+  tagline.textContent = item.tagline;
+  summary.textContent = item.summary;
+  detailZh.innerHTML = item.zh;
+  detailEn.innerHTML = item.en;
+  counter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(posterData.length).padStart(2, "0")}`;
+  setLanguage(currentLang);
 }
 
-function closeModal(){
-  overlay.classList.remove("active");
-  overlay.setAttribute("aria-hidden", "true");
-  setTimeout(() => {
-    overlay.style.display = "none";
-  }, 280);
-  document.body.style.overflow = "";
+function setLanguage(lang){
+  currentLang = lang;
+
+  if(lang === "zh"){
+    detailZh.classList.remove("hidden");
+    detailEn.classList.add("hidden");
+    tabZh.classList.add("active");
+    tabEn.classList.remove("active");
+  } else {
+    detailEn.classList.remove("hidden");
+    detailZh.classList.add("hidden");
+    tabEn.classList.add("active");
+    tabZh.classList.remove("active");
+  }
 }
 
-overlay.addEventListener("click", (e) => {
-  if (e.target === overlay) closeModal();
-});
+function nextPoster(){
+  currentIndex = (currentIndex + 1) % posterData.length;
+  renderPoster(currentIndex);
+}
+
+function prevPoster(){
+  currentIndex = (currentIndex - 1 + posterData.length) % posterData.length;
+  renderPoster(currentIndex);
+}
+
+nextBtn.addEventListener("click", nextPoster);
+prevBtn.addEventListener("click", prevPoster);
+
+tabZh.addEventListener("click", () => setLanguage("zh"));
+tabEn.addEventListener("click", () => setLanguage("en"));
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && overlay.classList.contains("active")) {
-    closeModal();
-  }
+  if(e.key === "ArrowRight") nextPoster();
+  if(e.key === "ArrowLeft") prevPoster();
 });
+
+/* 輕 3D */
+stage.addEventListener("mousemove", (e) => {
+  if (window.matchMedia("(hover: none)").matches) return;
+
+  const rect = stage.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const xc = rect.width / 2;
+  const yc = rect.height / 2;
+  const dx = (x - xc) / xc;
+  const dy = (y - yc) / yc;
+
+  const rotateY = dx * 4.2;
+  const rotateX = -dy * 4.2;
+
+  stage.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.003)`;
+  posterImage.style.transform = `scale(1.05) translateX(${dx * 8}px) translateY(${dy * 8}px)`;
+});
+
+stage.addEventListener("mouseleave", () => {
+  stage.style.transform = "";
+  posterImage.style.transform = "scale(1.03)";
+});
+
+renderPoster(currentIndex);
 </script>
 
 </body>
