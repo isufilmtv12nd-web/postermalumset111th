@@ -1,11 +1,287 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>Test</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;
+}
+
+/* overlay */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:.4s;
+}
+.overlay.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* layout */
+.gallery{
+  text-align:center;
+  padding:20px;
+}
+
+/* card */
+.poster-card{
+  position:relative;
+  display:inline-block;
+  width:100%;
+  max-width:420px;
+  aspect-ratio:2/3;
+  border-radius:28px;
+  overflow:hidden;
+  background:#111;
+  margin-bottom:30px;
+}
+
+/* img */
+.poster-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  cursor:pointer;
+}
+
+/* info */
+.poster-info{
+  position:absolute;
+  top:0;
+  right:-100%;
+  width:80%;
+  height:100%;
+  background:#fff;
+  padding:20px;
+  overflow:auto;
+  transition:.4s;
+}
+
+.poster-card.active .poster-info{
+  right:0;
+}
+
+/* text */
+.poster-title{
+  font-size:22px;
+  margin:0;
+}
+
+.poster-tag{
+  font-size:12px;
+  color:#888;
+}
+
+.text{
+  margin-top:12px;
+  font-size:14px;
+  line-height:1.6;
+  white-space:pre-line;
+}
+
+.hidden{display:none}
+
+/* switch */
+.lang-switch{
+  margin-top:10px;
+  display:flex;
+}
+
+.lang-btn{
+  flex:1;
+  padding:6px;
+  border:none;
+  cursor:pointer;
+}
+
+.lang-btn.active{
+  background:#000;
+  color:#fff;
+}
+</style>
 </head>
+
 <body>
-  <h1>Hello</h1>
-  <img src="海報/20260325_BTB_海報_v01.png" style="width:300px;">
+
+<div class="overlay" id="overlay"></div>
+<div class="gallery" id="gallery"></div>
+
+<script>
+const data = [
+
+{
+title:"水管嬰兒",
+tag:"BLOOD TUBE BABY",
+img:"海報/20260325_BTB_海報_v01.png",
+zh:`有些痛，不在身體，而在被迫承受的「意義」。
+
+一個女人在廚房熬著苦澀的藥，只想把那場「意外」連根拔起；
+另一個女人在冷白的診間裡，試圖向冰冷的器械乞討一個生命。
+
+迴盪在水管裡的，是還未出世的哀求，還是早已破碎的自尊？
+
+當社會設下的框架變成一座子宮，她們便成了被禁錮的容器。
+
+直到那聲啼哭響起——
+留下來的，究竟是救贖，還是無法擺脫的餘燼？`,
+en:`Some pain does not reside in the body, but in the “meaning” one is forced to bear.
+
+In a dim kitchen, a woman simmers a bitter concoction, desperate to uproot an “accident” from her life.
+Elsewhere, under the cold white lights of a clinic, another woman pleads with unfeeling machines for a life she cannot conceive.
+
+Echoing through the pipes—
+is it the plea of an unborn child, or the fragments of a dignity already shattered?
+
+When society’s imposed framework becomes a womb,
+they are reduced to vessels—confined, contained, and defined.
+
+Until a cry finally breaks the silence—
+what remains in its wake: redemption,
+or embers that can never be extinguished?`
+},
+
+{
+title:"透明的孩子",
+tag:"THE WINGLESS CHILD",
+img:"海報/20260325_TWC_poster01.jpg",
+zh:`有些人活著，卻從未被看見。
+
+無國籍男孩 Evan，在被遺棄與忽視中成長，渴望被命名、被記住。直到他遇見同樣失去至親的大體化妝師靜瀾，兩個孤獨的靈魂短暫相依，卻終將被命運分開。
+
+當世界選擇忽視，你還相信自己的存在嗎？`,
+en:`Some people are alive, yet never truly seen.
+
+Evan, a stateless boy, grows up abandoned and overlooked, longing to be named—to be remembered. Until he meets Jinglan, a mortuary makeup artist who has also lost someone dear. Two solitary souls find brief solace in each other, only to be parted by fate.
+
+When the world chooses to look away, do you still believe in your own existence?`
+},
+
+{
+title:"煙燻屋",
+tag:"THROUGH THE SMOKE",
+img:"海報/20260326_TTS_poster_v01.png",
+zh:`有些距離，不只是時間，而是說不出口的過去。
+
+瑞恩在多年離家後重返新加坡，面對與父親未解的心結。在煙霧瀰漫的記憶與信仰之中，他試圖透過影像梳理過去，也重新尋找自己的人生方向。
+
+當記憶無法散去，你是否還有勇氣回頭面對？`,
+en:`Some distances are not measured by time, but by the past left unspoken.
+
+After years away, Ryan returns to Singapore to confront the unresolved distance between himself and his father. Amid smoke-laden memories and questions of faith, he turns to filmmaking to piece together the past—and to rediscover his own direction.
+
+When memories refuse to fade, do you still have the courage to turn back and face them?`
+},
+
+{
+title:"真話",
+tag:"MAKOTO",
+img:"海報/Screenshot 2026-04-07 at 02.42.06.png",
+zh:`有些謊言，是為了讓人繼續被愛。
+
+東雲眞在父親失去記憶後，透過「出租家族」重現母親的身影，卻在過程中逐漸看見被隱藏的真相。
+
+眼見未必為真，真相或許從不在眼前，而在心裡。
+
+當虛假的關係承載真實的情感，愛，是否仍然成立？`,
+en:`Some lies exist so that love can endure.
+
+After his father loses his memory, Shinonome Makoto turns to a “rental family” service to recreate the presence of his mother. Yet as the illusion unfolds, he begins to uncover truths long kept hidden.
+
+What we see is not always real; perhaps truth has never resided before our eyes, but within the heart.
+
+When fabricated relationships come to carry genuine emotion, does love still remain true?`
+},
+
+{
+title:"瘋籠",
+tag:"THE MAD CAGE",
+img:"海報/《瘋籠》POSTER.JPG",
+zh:`有些人以為逃出了牢籠，卻只是墮入了另一個更大的深淵。
+
+王俊熙因童年創傷患上 PTSD，在一次失控後被送入精神病院，卻意外揭開院內正榨取病人情感來研發一個AI情感App《知己》。
+
+他試圖逃離，卻在付出慘痛代價後發現，外面的世界，早已沉溺於一場虛假的陪伴之中。
+
+當真相可以摧毀你所依賴的一切，你會選擇面對，還是視而不見？`,
+en:`Some believe they’ve escaped a cage, only to fall into a deeper abyss.
+
+Haunted by childhood trauma, Wang Junxi suffers from PTSD and is institutionalized after a violent breakdown. Inside the psychiatric facility, he uncovers a hidden operation—one that extracts patients’ emotions to develop an AI companion app, Confidant.
+
+As he attempts to escape, he pays a devastating price, only to realize that the world outside has already surrendered to an illusion of companionship.
+
+When the truth has the power to shatter everything you depend on, would you choose to face it—or turn away?`
+}
+
+];
+
+const gallery = document.getElementById("gallery");
+const overlay = document.getElementById("overlay");
+
+data.forEach(item=>{
+  const el=document.createElement("div");
+
+  el.innerHTML=`
+  <div class="poster-card">
+    <img src="${item.img}">
+    <div class="poster-info">
+      <div class="poster-tag">${item.tag}</div>
+      <h2 class="poster-title">${item.title}</h2>
+
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="zh">中</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+
+      <div class="text zh">${item.zh}</div>
+      <div class="text en hidden">${item.en}</div>
+    </div>
+  </div>`;
+
+  const card=el.querySelector(".poster-card");
+  const img=el.querySelector("img");
+
+  img.onclick=()=>{
+    document.querySelectorAll(".poster-card").forEach(c=>c.classList.remove("active"));
+    card.classList.add("active");
+    overlay.classList.add("active");
+  };
+
+  overlay.onclick=()=>{
+    document.querySelectorAll(".poster-card").forEach(c=>c.classList.remove("active"));
+    overlay.classList.remove("active");
+  };
+
+  const zh=el.querySelector(".zh");
+  const en=el.querySelector(".en");
+  const btns=el.querySelectorAll(".lang-btn");
+
+  btns.forEach(btn=>{
+    btn.onclick=()=>{
+      btns.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+
+      if(btn.dataset.lang==="zh"){
+        zh.classList.remove("hidden");
+        en.classList.add("hidden");
+      }else{
+        en.classList.remove("hidden");
+        zh.classList.add("hidden");
+      }
+    }
+  });
+
+  gallery.appendChild(el);
+});
+</script>
+
 </body>
 </html>
