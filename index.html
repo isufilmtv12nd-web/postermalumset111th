@@ -1,76 +1,170 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Film Showcase</title>
 
 <style>
 *{box-sizing:border-box}
 
-body{
+:root{
+  --bg:#09090c;
+  --bg2:#11131a;
+  --text:#f5f5f7;
+  --muted:rgba(255,255,255,.56);
+  --line:rgba(255,255,255,.08);
+  --glass:rgba(255,255,255,.08);
+  --glass-strong:rgba(255,255,255,.14);
+  --shadow:0 30px 80px rgba(0,0,0,.42);
+}
+
+html,body{
   margin:0;
-  background:#0b0b0f;
-  color:#fff;
+  padding:0;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.06), transparent 30%),
+    linear-gradient(180deg, #0a0b10 0%, #09090c 100%);
+  color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;
 }
 
-.gallery{
-  width:min(900px,100%);
-  margin:0 auto;
-  padding:30px 16px 60px;
-  display:flex;
-  flex-direction:column;
-  gap:60px;
+body.lock{
+  overflow:hidden;
 }
 
+/* 首頁 */
+.hero{
+  width:min(900px, calc(100% - 28px));
+  margin:0 auto;
+  padding:34px 0 14px;
+  text-align:center;
+}
+
+.hero-kicker{
+  font-size:12px;
+  letter-spacing:2.6px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+
+.hero-title{
+  margin:0;
+  font-size:clamp(30px, 6vw, 56px);
+  line-height:1.04;
+  font-weight:800;
+}
+
+.hero-sub{
+  margin:14px auto 0;
+  width:min(700px,100%);
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.8;
+}
+
+.gallery{
+  width:min(900px, calc(100% - 28px));
+  margin:0 auto;
+  padding:14px 0 70px;
+  display:flex;
+  flex-direction:column;
+  gap:64px;
+}
+
+/* 海報卡 */
 .poster-card{
+  width:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
   cursor:pointer;
+  opacity:0;
+  transform:translateY(28px);
+  animation:fadeUp .8s ease forwards;
 }
 
-.poster-img{
+.poster-card:nth-child(2){animation-delay:.08s}
+.poster-card:nth-child(3){animation-delay:.16s}
+.poster-card:nth-child(4){animation-delay:.24s}
+.poster-card:nth-child(5){animation-delay:.32s}
+
+.poster-frame{
+  position:relative;
   width:100%;
-  max-width:420px;
+  max-width:430px;
   aspect-ratio:2/3;
-  border-radius:28px;
+  border-radius:30px;
   overflow:hidden;
-  box-shadow:0 30px 80px rgba(0,0,0,.4);
+  background:#141414;
+  box-shadow:var(--shadow);
+  border:1px solid rgba(255,255,255,.05);
+  transition:transform .5s ease, box-shadow .5s ease, filter .5s ease;
 }
 
-.poster-img img{
+.poster-card:hover .poster-frame{
+  transform:translateY(-6px) scale(1.01);
+  box-shadow:0 40px 100px rgba(0,0,0,.5);
+}
+
+.poster-frame img{
   width:100%;
   height:100%;
   object-fit:cover;
+  display:block;
+  transition:transform 1.1s ease;
 }
 
-.poster-info{
-  text-align:center;
+.poster-card:hover .poster-frame img{
+  transform:scale(1.04);
+}
+
+.poster-glow{
+  position:absolute;
+  inset:auto 0 0 0;
+  height:40%;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,.55));
+  pointer-events:none;
+}
+
+.poster-meta{
   margin-top:18px;
+  text-align:center;
 }
 
 .poster-tag{
   font-size:12px;
   letter-spacing:2px;
-  color:rgba(255,255,255,.5);
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:8px;
 }
 
 .poster-title{
-  margin:6px 0 0;
-  font-size:24px;
-  font-weight:700;
+  margin:0;
+  font-size:26px;
+  font-weight:750;
+  line-height:1.18;
 }
 
-/* ===== 沉浸閱讀 ===== */
+.poster-hint{
+  margin-top:10px;
+  font-size:13px;
+  color:rgba(255,255,255,.45);
+}
+
+/* 閱讀模式 */
 .reader{
   position:fixed;
   inset:0;
-  background:#0b0b0f;
   z-index:100;
   opacity:0;
   pointer-events:none;
-  transition:.4s;
+  transition:opacity .45s ease;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.08), transparent 30%),
+    linear-gradient(180deg, #0c0d12 0%, #09090c 100%);
 }
 
 .reader.active{
@@ -78,104 +172,283 @@ body{
   pointer-events:auto;
 }
 
-.reader-wrap{
-  width:min(900px,100%);
+.reader-scroll{
+  height:100vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.reader-inner{
+  width:min(1020px, calc(100% - 24px));
   margin:0 auto;
-  padding:20px;
+  padding:18px 0 40px;
 }
 
-.back{
-  margin-bottom:20px;
+.reader-top{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:6px 0 16px;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+
+.back-btn{
+  border:none;
+  border-radius:999px;
+  padding:12px 16px;
+  background:var(--glass);
+  color:var(--text);
+  border:1px solid var(--line);
   cursor:pointer;
-  color:#aaa;
+  font-size:14px;
+  font-weight:650;
+  transition:.25s ease;
 }
 
-.reader-img{
-  width:100%;
-  border-radius:28px;
-  overflow:hidden;
-}
-
-.reader-img img{
-  width:100%;
-}
-
-.reader-title{
-  margin-top:20px;
-  font-size:34px;
-  font-weight:800;
-}
-
-.reader-tag{
-  color:#888;
-  margin-top:6px;
+.back-btn:hover{
+  background:var(--glass-strong);
+  transform:translateY(-1px);
 }
 
 .lang-switch{
-  margin-top:14px;
-  display:flex;
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  padding:4px;
+  background:var(--glass);
+  border:1px solid var(--line);
   border-radius:999px;
-  overflow:hidden;
-  background:#222;
+}
+
+.lang-slider{
+  position:absolute;
+  top:4px;
+  left:4px;
+  width:calc(50% - 4px);
+  height:calc(100% - 8px);
+  background:#fff;
+  border-radius:999px;
+  transition:left .28s cubic-bezier(.22,1,.36,1);
+}
+
+.lang-switch.en .lang-slider{
+  left:calc(50% + 0px);
 }
 
 .lang-btn{
-  flex:1;
-  padding:8px;
+  position:relative;
+  z-index:2;
+  min-width:56px;
+  padding:8px 14px;
   border:none;
-  background:none;
-  color:#aaa;
+  background:transparent;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
   cursor:pointer;
 }
 
 .lang-btn.active{
-  background:#fff;
-  color:#000;
+  color:#111;
 }
 
-.text{
-  margin-top:20px;
-  line-height:1.8;
-  font-size:16px;
+.reader-grid{
+  display:grid;
+  grid-template-columns:minmax(320px, 440px) minmax(0,1fr);
+  gap:34px;
+  align-items:start;
+}
+
+.reader-poster{
+  position:sticky;
+  top:78px;
+}
+
+.reader-poster-box{
+  border-radius:32px;
+  overflow:hidden;
+  background:#151515;
+  box-shadow:0 34px 90px rgba(0,0,0,.48);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.reader-poster-box img{
+  width:100%;
+  display:block;
+  aspect-ratio:2/3;
+  object-fit:cover;
+}
+
+.reader-content{
+  min-width:0;
+  padding-top:8px;
+}
+
+.reader-tag{
+  font-size:12px;
+  letter-spacing:2.4px;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+.reader-title{
+  margin:0;
+  font-size:clamp(34px, 5vw, 64px);
+  line-height:1.03;
+  font-weight:820;
+}
+
+.reader-divider{
+  width:86px;
+  height:1px;
+  background:rgba(255,255,255,.15);
+  margin:22px 0 18px;
+}
+
+.reader-text{
+  max-width:760px;
+  font-size:18px;
+  line-height:2;
+  color:rgba(255,255,255,.92);
   white-space:pre-line;
+  opacity:0;
+  transform:translateY(12px);
+  animation:textIn .55s ease forwards;
 }
 
-.hidden{display:none}
+.reader-text.hidden{
+  display:none;
+}
+
+.reader-foot{
+  margin-top:28px;
+  color:var(--muted);
+  font-size:13px;
+  letter-spacing:.2px;
+}
+
+@keyframes fadeUp{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@keyframes textIn{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@media (max-width:920px){
+  .reader-grid{
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+
+  .reader-poster{
+    position:relative;
+    top:0;
+    width:min(430px,100%);
+  }
+}
+
+@media (max-width:640px){
+  .hero{
+    padding-top:24px;
+  }
+
+  .gallery{
+    gap:42px;
+    padding-bottom:46px;
+  }
+
+  .poster-frame{
+    max-width:390px;
+    border-radius:24px;
+  }
+
+  .poster-title{
+    font-size:22px;
+  }
+
+  .reader-inner{
+    width:min(100%, calc(100% - 16px));
+    padding:12px 0 24px;
+  }
+
+  .reader-title{
+    font-size:34px;
+  }
+
+  .reader-text{
+    font-size:15.5px;
+    line-height:1.9;
+  }
+
+  .back-btn{
+    padding:10px 14px;
+    font-size:13px;
+  }
+}
 </style>
 </head>
-
 <body>
 
-<div class="gallery" id="gallery"></div>
+<section class="hero">
+  <div class="hero-kicker">Film Showcase</div>
+  <h1 class="hero-title">作品集</h1>
+  <div class="hero-sub">直式排列展示。點擊任一張海報，進入整頁沉浸式閱讀模式。</div>
+</section>
 
-<div class="reader" id="reader">
-  <div class="reader-wrap">
-    <div class="back" id="back">← 返回</div>
+<section class="gallery" id="gallery"></section>
 
-    <div class="reader-img">
-      <img id="rImg">
+<section class="reader" id="reader">
+  <div class="reader-scroll" id="readerScroll">
+    <div class="reader-inner">
+      <div class="reader-top">
+        <button class="back-btn" id="backBtn">← 返回作品列表</button>
+
+        <div class="lang-switch" id="langSwitch">
+          <div class="lang-slider"></div>
+          <button class="lang-btn active" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+
+      <div class="reader-grid">
+        <div class="reader-poster">
+          <div class="reader-poster-box">
+            <img id="readerImg" src="" alt="">
+          </div>
+        </div>
+
+        <div class="reader-content">
+          <div class="reader-tag" id="readerTag"></div>
+          <h2 class="reader-title" id="readerTitle"></h2>
+          <div class="reader-divider"></div>
+          <div class="reader-text" id="readerZh"></div>
+          <div class="reader-text hidden" id="readerEn"></div>
+          <div class="reader-foot">Switch language anytime · Scroll to read</div>
+        </div>
+      </div>
     </div>
-
-    <div class="reader-title" id="rTitle"></div>
-    <div class="reader-tag" id="rTag"></div>
-
-    <div class="lang-switch">
-      <button class="lang-btn active" data-lang="zh">中</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-    </div>
-
-    <div class="text zh" id="rZh"></div>
-    <div class="text en hidden" id="rEn"></div>
   </div>
-</div>
+</section>
 
 <script>
 const data = [
-
 {
 title:"水管嬰兒",
 tag:"BLOOD TUBE BABY",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/e093cd4a1458df566513c57f7dfda416470ab395/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_v01.png",
+img:"海報/20260325_BTB_海報_v01.png",
 zh:`有些痛，不在身體，而在被迫承受的「意義」。
 
 一個女人在廚房熬著苦澀的藥，只想把那場「意外」連根拔起；
@@ -202,11 +475,10 @@ Until a cry finally breaks the silence—
 what remains in its wake: redemption,
 or embers that can never be extinguished?`
 },
-
 {
 title:"透明的孩子",
 tag:"THE WINGLESS CHILD",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg",
+img:"海報/20260325_TWC_poster01.jpg",
 zh:`有些人活著，卻從未被看見。
 
 無國籍男孩 Evan，在被遺棄與忽視中成長，渴望被命名、被記住。直到他遇見同樣失去至親的大體化妝師靜瀾，兩個孤獨的靈魂短暫相依，卻終將被命運分開。
@@ -218,11 +490,10 @@ Evan, a stateless boy, grows up abandoned and overlooked, longing to be named—
 
 When the world chooses to look away, do you still believe in your own existence?`
 },
-
 {
 title:"煙燻屋",
 tag:"THROUGH THE SMOKE",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png",
+img:"海報/20260326_TTS_poster_v01.png",
 zh:`有些距離，不只是時間，而是說不出口的過去。
 
 瑞恩在多年離家後重返新加坡，面對與父親未解的心結。在煙霧瀰漫的記憶與信仰之中，他試圖透過影像梳理過去，也重新尋找自己的人生方向。
@@ -234,11 +505,10 @@ After years away, Ryan returns to Singapore to confront the unresolved distance 
 
 When memories refuse to fade, do you still have the courage to turn back and face them?`
 },
-
 {
 title:"真話",
 tag:"MAKOTO",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/b9bad7240b116215ad2a69310096fe3bf14a79ff/%E6%B5%B7%E5%A0%B1/Screenshot%202026-04-07%20at%2002.42.06.png",
+img:"海報/Screenshot 2026-04-07 at 02.42.06.png",
 zh:`有些謊言，是為了讓人繼續被愛。
 
 東雲眞在父親失去記憶後，透過「出租家族」重現母親的身影，卻在過程中逐漸看見被隱藏的真相。
@@ -254,11 +524,10 @@ What we see is not always real; perhaps truth has never resided before our eyes,
 
 When fabricated relationships come to carry genuine emotion, does love still remain true?`
 },
-
 {
 title:"瘋籠",
 tag:"THE MAD CAGE",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/main/%E6%B5%B7%E5%A0%B1/%E3%80%8A%E7%98%8B%E7%B1%A0%E3%80%8BPOSTER.JPG",
+img:"海報/《瘋籠》POSTER.JPG",
 zh:`有些人以為逃出了牢籠，卻只是墮入了另一個更大的深淵。
 
 王俊熙因童年創傷患上 PTSD，在一次失控後被送入精神病院，卻意外揭開院內正榨取病人情感來研發一個AI情感App《知己》。
@@ -274,56 +543,100 @@ As he attempts to escape, he pays a devastating price, only to realize that the 
 
 When the truth has the power to shatter everything you depend on, would you choose to face it—or turn away?`
 }
-
 ];
 
-const gallery=document.getElementById("gallery");
-const reader=document.getElementById("reader");
+const gallery = document.getElementById("gallery");
+const reader = document.getElementById("reader");
+const readerScroll = document.getElementById("readerScroll");
+const readerImg = document.getElementById("readerImg");
+const readerTag = document.getElementById("readerTag");
+const readerTitle = document.getElementById("readerTitle");
+const readerZh = document.getElementById("readerZh");
+const readerEn = document.getElementById("readerEn");
+const backBtn = document.getElementById("backBtn");
+const langSwitch = document.getElementById("langSwitch");
+const langBtns = langSwitch.querySelectorAll(".lang-btn");
 
-data.forEach(item=>{
-  const el=document.createElement("div");
-  el.className="poster-card";
+let currentLang = "zh";
 
-  el.innerHTML=`
-  <div class="poster-img">
-    <img src="${item.img}">
-  </div>
-  <div class="poster-info">
-    <div class="poster-tag">${item.tag}</div>
-    <div class="poster-title">${item.title}</div>
-  </div>
-  `;
+function renderGallery(){
+  data.forEach(item=>{
+    const card = document.createElement("article");
+    card.className = "poster-card";
 
-  el.onclick=()=>{
-    document.getElementById("rImg").src=item.img;
-    document.getElementById("rTitle").innerText=item.title;
-    document.getElementById("rTag").innerText=item.tag;
-    document.getElementById("rZh").innerText=item.zh;
-    document.getElementById("rEn").innerText=item.en;
-    reader.classList.add("active");
-  };
+    card.innerHTML = `
+      <div class="poster-frame">
+        <img src="${item.img}" alt="${item.title} Poster" loading="lazy">
+        <div class="poster-glow"></div>
+      </div>
+      <div class="poster-meta">
+        <div class="poster-tag">${item.tag}</div>
+        <h2 class="poster-title">${item.title}</h2>
+        <div class="poster-hint">點擊進入沉浸式閱讀</div>
+      </div>
+    `;
 
-  gallery.appendChild(el);
+    card.addEventListener("click", ()=> openReader(item));
+    gallery.appendChild(card);
+  });
+}
+
+function setLanguage(lang){
+  currentLang = lang;
+
+  if(lang === "zh"){
+    readerZh.classList.remove("hidden");
+    readerEn.classList.add("hidden");
+    langSwitch.classList.remove("en");
+  }else{
+    readerEn.classList.remove("hidden");
+    readerZh.classList.add("hidden");
+    langSwitch.classList.add("en");
+  }
+
+  langBtns.forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.lang === lang);
+  });
+
+  // 重新觸發文字淡入
+  const activeText = lang === "zh" ? readerZh : readerEn;
+  activeText.style.animation = "none";
+  activeText.offsetHeight;
+  activeText.style.animation = "textIn .55s ease forwards";
+}
+
+function openReader(item){
+  readerImg.src = item.img;
+  readerImg.alt = item.title + " Poster";
+  readerTag.textContent = item.tag;
+  readerTitle.textContent = item.title;
+  readerZh.textContent = item.zh;
+  readerEn.textContent = item.en;
+
+  setLanguage(currentLang);
+  reader.classList.add("active");
+  document.body.classList.add("lock");
+  readerScroll.scrollTop = 0;
+}
+
+function closeReader(){
+  reader.classList.remove("active");
+  document.body.classList.remove("lock");
+}
+
+langBtns.forEach(btn=>{
+  btn.addEventListener("click", ()=> setLanguage(btn.dataset.lang));
 });
 
-document.getElementById("back").onclick=()=>{
-  reader.classList.remove("active");
-};
+backBtn.addEventListener("click", closeReader);
 
-document.querySelectorAll(".lang-btn").forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-
-    if(btn.dataset.lang==="zh"){
-      document.querySelector(".zh").classList.remove("hidden");
-      document.querySelector(".en").classList.add("hidden");
-    }else{
-      document.querySelector(".en").classList.remove("hidden");
-      document.querySelector(".zh").classList.add("hidden");
-    }
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape" && reader.classList.contains("active")){
+    closeReader();
   }
 });
+
+renderGallery();
 </script>
 
 </body>
