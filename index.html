@@ -10,10 +10,6 @@
 
 :root{
   --text:#f5f5f7;
-  --muted:rgba(255,255,255,.62);
-  --soft:rgba(255,255,255,.38);
-  --line:rgba(255,255,255,.10);
-  --glass:rgba(255,255,255,.08);
   --shadow:0 30px 80px rgba(0,0,0,.28);
   --shadow-hover:0 42px 110px rgba(0,0,0,.36);
   --radius-xl:32px;
@@ -194,7 +190,7 @@ html,body{
   color:rgba(0,0,0,.42);
 }
 
-/* 原地展開面板 */
+/* 只有文字展開 */
 .expand-panel{
   width:min(100%, 760px);
   margin:18px auto 0;
@@ -206,26 +202,24 @@ html,body{
   backdrop-filter:blur(22px) saturate(140%);
   -webkit-backdrop-filter:blur(22px) saturate(140%);
   opacity:0;
-  transform:translateY(-8px) scale(.985);
+  transform:translateY(-8px);
   max-height:0;
   transition:
     opacity .35s ease,
     transform .45s cubic-bezier(.22,1,.36,1),
-    max-height .5s cubic-bezier(.22,1,.36,1),
-    margin .35s ease,
-    padding .35s ease;
+    max-height .5s cubic-bezier(.22,1,.36,1);
   pointer-events:none;
 }
 
 .expand-panel.active{
   opacity:1;
-  transform:translateY(0) scale(1);
-  max-height:2200px;
+  transform:translateY(0);
+  max-height:1600px;
   pointer-events:auto;
 }
 
 .expand-inner{
-  padding:14px;
+  padding:18px 18px 20px;
 }
 
 .expand-top{
@@ -233,7 +227,7 @@ html,body{
   justify-content:space-between;
   align-items:center;
   gap:10px;
-  margin-bottom:14px;
+  margin-bottom:16px;
 }
 
 .expand-close{
@@ -296,29 +290,6 @@ html,body{
   color:#111;
 }
 
-.expand-grid{
-  display:grid;
-  grid-template-columns:minmax(220px, 320px) minmax(0,1fr);
-  gap:22px;
-  align-items:start;
-}
-
-.expand-poster-box{
-  position:relative;
-  border-radius:24px;
-  overflow:hidden;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 18px 50px rgba(0,0,0,.22);
-}
-
-.expand-poster-box img{
-  width:100%;
-  aspect-ratio:2/3;
-  object-fit:cover;
-  display:block;
-}
-
 .expand-tag{
   font-size:12px;
   letter-spacing:2.2px;
@@ -367,26 +338,6 @@ html,body{
   }
 }
 
-@media (max-width:760px){
-  .expand-grid{
-    grid-template-columns:1fr;
-  }
-
-  .expand-poster-box{
-    width:min(320px, 100%);
-    margin:0 auto;
-  }
-
-  .expand-title{
-    font-size:30px;
-  }
-
-  .expand-text{
-    font-size:15px;
-    line-height:1.9;
-  }
-}
-
 @media (max-width:640px){
   .shell{
     padding-top:18px;
@@ -423,11 +374,7 @@ html,body{
   }
 
   .expand-inner{
-    padding:12px;
-  }
-
-  .expand-top{
-    align-items:center;
+    padding:14px;
   }
 
   .expand-close{
@@ -439,6 +386,15 @@ html,body{
     min-width:50px;
     padding:8px 12px;
   }
+
+  .expand-title{
+    font-size:30px;
+  }
+
+  .expand-text{
+    font-size:15px;
+    line-height:1.9;
+  }
 }
 </style>
 </head>
@@ -448,7 +404,7 @@ html,body{
   <section class="hero">
     <div class="hero-kicker">FILM SHOWCASE</div>
     <h1 class="hero-title">作品集</h1>
-    <div class="hero-sub">點擊任一張海報，直接在該海報下方展開內容。</div>
+    <div class="hero-sub">點擊任一張海報，直接在該海報下方展開文字內容。</div>
   </section>
 
   <section class="gallery" id="gallery"></section>
@@ -580,7 +536,7 @@ function renderGallery(){
       <div class="poster-meta">
         <div class="poster-tag">${item.tag}</div>
         <h2 class="poster-title">${item.title}</h2>
-        <div class="poster-hint">點擊展開內容</div>
+        <div class="poster-hint">點擊展開文字</div>
       </div>
 
       <div class="expand-panel">
@@ -595,19 +551,13 @@ function renderGallery(){
             </div>
           </div>
 
-          <div class="expand-grid">
-            <div class="expand-poster-box">
-              <img src="${item.img}" alt="${item.title} Poster">
-            </div>
-
-            <div class="expand-content">
-              <div class="expand-tag">${item.tag}</div>
-              <h3 class="expand-title">${item.title}</h3>
-              <div class="expand-divider"></div>
-              <div class="expand-text expand-zh">${item.zh}</div>
-              <div class="expand-text expand-en hidden">${item.en}</div>
-              <div class="expand-foot">Switch language anytime</div>
-            </div>
+          <div class="expand-content">
+            <div class="expand-tag">${item.tag}</div>
+            <h3 class="expand-title">${item.title}</h3>
+            <div class="expand-divider"></div>
+            <div class="expand-text expand-zh">${item.zh}</div>
+            <div class="expand-text expand-en hidden">${item.en}</div>
+            <div class="expand-foot">Switch language anytime</div>
           </div>
         </div>
       </div>
