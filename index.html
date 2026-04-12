@@ -1,139 +1,472 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Film Showcase</title>
 
 <style>
-*{box-sizing:border-box;}
+*{box-sizing:border-box}
 
-body{
+:root{
+  --bg:#0b0b0f;
+  --card:#111218;
+  --text:#f5f5f7;
+  --muted:rgba(255,255,255,.62);
+  --line:rgba(255,255,255,.08);
+  --panel:rgba(255,255,255,.06);
+  --panel-strong:rgba(255,255,255,.1);
+  --shadow:0 20px 60px rgba(0,0,0,.35);
+  --radius:28px;
+}
+
+html,body{
   margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;
 }
 
-/* overlay */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  opacity:0;
-  pointer-events:none;
-  transition:.4s;
-}
-.overlay.active{
-  opacity:1;
-  pointer-events:auto;
+body{
+  overflow-x:hidden;
 }
 
-/* layout */
-.gallery{
+button{
+  font:inherit;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+/* 首頁海報列表 */
+.gallery-view{
+  min-height:100vh;
+  padding:28px 16px 40px;
+}
+
+.gallery-wrap{
+  width:min(1200px, 100%);
+  margin:0 auto;
+}
+
+.gallery-head{
   text-align:center;
-  padding:20px;
+  margin-bottom:28px;
 }
 
-/* card */
+.gallery-kicker{
+  font-size:12px;
+  letter-spacing:2.4px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+
+.gallery-title{
+  margin:0;
+  font-size:clamp(28px, 5vw, 56px);
+  line-height:1.02;
+  font-weight:800;
+}
+
+.gallery-sub{
+  width:min(760px, 100%);
+  margin:14px auto 0;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.7;
+}
+
+.poster-grid{
+  margin-top:30px;
+  display:grid;
+  grid-template-columns:repeat(5, minmax(0,1fr));
+  gap:18px;
+}
+
 .poster-card{
   position:relative;
-  display:inline-block;
-  width:100%;
-  max-width:420px;
-  aspect-ratio:2/3;
-  border-radius:28px;
-  overflow:hidden;
-  background:#111;
-  margin-bottom:30px;
-}
-
-/* img */
-.poster-card img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+  border:none;
+  background:transparent;
+  padding:0;
   cursor:pointer;
+  text-align:left;
+  transition:transform .35s ease, filter .35s ease;
 }
 
-/* info */
-.poster-info{
-  position:absolute;
-  top:0;
-  right:-100%;
-  width:80%;
+.poster-card:hover{
+  transform:translateY(-4px);
+}
+
+.poster-thumb{
+  position:relative;
+  width:100%;
+  aspect-ratio:2/3;
+  border-radius:24px;
+  overflow:hidden;
+  background:#151515;
+  box-shadow:var(--shadow);
+}
+
+.poster-thumb img{
+  width:100%;
   height:100%;
-  background:#fff;
-  padding:20px;
-  overflow:auto;
-  transition:.4s;
+  display:block;
+  object-fit:cover;
+  transition:transform .6s ease;
 }
 
-.poster-card.active .poster-info{
-  right:0;
+.poster-card:hover .poster-thumb img{
+  transform:scale(1.03);
 }
 
-/* text */
-.poster-title{
-  font-size:22px;
-  margin:0;
+.poster-meta{
+  padding:12px 4px 0;
 }
 
 .poster-tag{
-  font-size:12px;
-  color:#888;
+  font-size:11px;
+  letter-spacing:1.8px;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:6px;
 }
 
-.text{
-  margin-top:12px;
-  font-size:14px;
-  line-height:1.6;
-  white-space:pre-line;
+.poster-name{
+  font-size:18px;
+  line-height:1.2;
+  font-weight:700;
+  margin:0;
 }
 
-.hidden{display:none}
+.poster-hint{
+  margin-top:8px;
+  font-size:13px;
+  color:var(--muted);
+}
 
-/* switch */
-.lang-switch{
-  margin-top:10px;
+/* 沉浸式閱讀頁 */
+.reader{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:
+    radial-gradient(circle at top center, rgba(255,255,255,.08), transparent 35%),
+    linear-gradient(180deg, #0d0f15 0%, #090a0d 100%);
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(12px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+
+.reader.active{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(0);
+}
+
+.reader-scroll{
+  height:100%;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.reader-shell{
+  width:min(1300px, calc(100% - 32px));
+  margin:0 auto;
+  padding:22px 0 44px;
+}
+
+.reader-topbar{
+  position:sticky;
+  top:0;
+  z-index:5;
   display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0 16px;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+.topbar-left,
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.icon-btn,
+.lang-btn{
+  border:none;
+  cursor:pointer;
+  border-radius:999px;
+  transition:background .25s ease, transform .25s ease, opacity .25s ease;
+}
+
+.icon-btn{
+  background:var(--panel);
+  color:var(--text);
+  padding:12px 16px;
+  font-size:14px;
+  font-weight:600;
+  border:1px solid var(--line);
+}
+
+.icon-btn:hover{
+  background:var(--panel-strong);
+  transform:translateY(-1px);
+}
+
+.lang-switch{
+  position:relative;
+  display:inline-flex;
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:4px;
+  border-radius:999px;
+}
+
+.lang-slider{
+  position:absolute;
+  top:4px;
+  left:4px;
+  width:calc(50% - 4px);
+  height:calc(100% - 8px);
+  background:#fff;
+  border-radius:999px;
+  transition:left .28s cubic-bezier(.22,1,.36,1);
+}
+
+.lang-switch.en .lang-slider{
+  left:calc(50% + 0px);
 }
 
 .lang-btn{
-  flex:1;
-  padding:6px;
-  border:none;
-  cursor:pointer;
+  position:relative;
+  z-index:2;
+  min-width:54px;
+  padding:8px 16px;
+  background:transparent;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
 }
 
 .lang-btn.active{
-  background:#000;
-  color:#fff;
+  color:#111;
+}
+
+.reader-main{
+  display:grid;
+  grid-template-columns:minmax(320px, 460px) minmax(0, 1fr);
+  gap:34px;
+  align-items:start;
+}
+
+.reader-poster{
+  position:sticky;
+  top:82px;
+}
+
+.reader-poster-frame{
+  border-radius:32px;
+  overflow:hidden;
+  background:#141414;
+  box-shadow:0 28px 80px rgba(0,0,0,.42);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.reader-poster-frame img{
+  width:100%;
+  display:block;
+  aspect-ratio:2/3;
+  object-fit:cover;
+}
+
+.reader-content{
+  min-width:0;
+  padding-top:8px;
+}
+
+.reader-kicker{
+  font-size:12px;
+  letter-spacing:2.4px;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.reader-title{
+  margin:0;
+  font-size:clamp(32px, 5vw, 64px);
+  line-height:1.02;
+  font-weight:800;
+}
+
+.reader-divider{
+  width:72px;
+  height:1px;
+  background:rgba(255,255,255,.16);
+  margin:24px 0 18px;
+}
+
+.reader-text{
+  font-size:18px;
+  line-height:1.95;
+  color:rgba(255,255,255,.9);
+  white-space:pre-line;
+  max-width:760px;
+}
+
+.reader-text.hidden{
+  display:none;
+}
+
+.reader-foot{
+  margin-top:28px;
+  color:var(--muted);
+  font-size:13px;
+  letter-spacing:.2px;
+}
+
+.fade-out{
+  opacity:0;
+  transform:scale(.985);
+  transition:opacity .28s ease, transform .28s ease;
+}
+
+@media (max-width:1100px){
+  .poster-grid{
+    grid-template-columns:repeat(3, minmax(0,1fr));
+  }
+
+  .reader-main{
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+
+  .reader-poster{
+    position:relative;
+    top:0;
+    width:min(460px, 100%);
+  }
+}
+
+@media (max-width:720px){
+  .gallery-view{
+    padding:20px 12px 28px;
+  }
+
+  .poster-grid{
+    grid-template-columns:repeat(1, minmax(0,1fr));
+    gap:22px;
+  }
+
+  .poster-card{
+    width:min(420px, 100%);
+    margin:0 auto;
+  }
+
+  .reader-shell{
+    width:min(100%, calc(100% - 20px));
+    padding:14px 0 28px;
+  }
+
+  .reader-topbar{
+    padding:8px 0 12px;
+  }
+
+  .icon-btn{
+    padding:10px 14px;
+    font-size:13px;
+  }
+
+  .reader-title{
+    font-size:34px;
+  }
+
+  .reader-text{
+    font-size:15.5px;
+    line-height:1.9;
+  }
 }
 </style>
 </head>
-
 <body>
 
-<div class="overlay" id="overlay"></div>
-<div class="gallery" id="gallery"></div>
+<section class="gallery-view" id="galleryView">
+  <div class="gallery-wrap">
+    <div class="gallery-head">
+      <div class="gallery-kicker">Film Showcase</div>
+      <h1 class="gallery-title">作品集</h1>
+      <div class="gallery-sub">
+        點擊任一張海報，進入整頁沉浸式閱讀模式。
+      </div>
+    </div>
+
+    <div class="poster-grid" id="posterGrid"></div>
+  </div>
+</section>
+
+<section class="reader" id="reader">
+  <div class="reader-scroll">
+    <div class="reader-shell">
+      <div class="reader-topbar">
+        <div class="topbar-left">
+          <button class="icon-btn" id="backBtn">← 返回作品列表</button>
+        </div>
+
+        <div class="topbar-right">
+          <div class="lang-switch" id="langSwitch">
+            <div class="lang-slider"></div>
+            <button class="lang-btn active" data-lang="zh">中</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="reader-main">
+        <div class="reader-poster">
+          <div class="reader-poster-frame">
+            <img id="readerImg" src="" alt="">
+          </div>
+        </div>
+
+        <div class="reader-content">
+          <div class="reader-kicker" id="readerTag"></div>
+          <h2 class="reader-title" id="readerTitle"></h2>
+          <div class="reader-divider"></div>
+          <div class="reader-text" id="readerZh"></div>
+          <div class="reader-text hidden" id="readerEn"></div>
+          <div class="reader-foot">Tap poster to enter · Switch language anytime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <script>
 const data = [
-
-{
-title:"水管嬰兒",
-tag:"BLOOD TUBE BABY",
-img:"海報/20260325_BTB_海報_v01.png",
-zh:`有些痛，不在身體，而在被迫承受的「意義」。
+  {
+    title:"水管嬰兒",
+    tag:"BLOOD TUBE BABY",
+    img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/e093cd4a1458df566513c57f7dfda416470ab395/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_v01.png
+",
+    zh:`有些痛，不在身體，而在被迫承受的「意義」。
 
 一個女人在廚房熬著苦澀的藥，只想把那場「意外」連根拔起；
 另一個女人在冷白的診間裡，試圖向冰冷的器械乞討一個生命。
-
 迴盪在水管裡的，是還未出世的哀求，還是早已破碎的自尊？
-
 當社會設下的框架變成一座子宮，她們便成了被禁錮的容器。
 
 直到那聲啼哭響起——
 留下來的，究竟是救贖，還是無法擺脫的餘燼？`,
-en:`Some pain does not reside in the body, but in the “meaning” one is forced to bear.
+    en:`Some pain does not reside in the body, but in the “meaning” one is forced to bear.
 
 In a dim kitchen, a woman simmers a bitter concoction, desperate to uproot an “accident” from her life.
 Elsewhere, under the cold white lights of a clinic, another woman pleads with unfeeling machines for a life she cannot conceive.
@@ -147,140 +480,164 @@ they are reduced to vessels—confined, contained, and defined.
 Until a cry finally breaks the silence—
 what remains in its wake: redemption,
 or embers that can never be extinguished?`
-},
-
-{
-title:"透明的孩子",
-tag:"THE WINGLESS CHILD",
-img:"海報/20260325_TWC_poster01.jpg",
-zh:`有些人活著，卻從未被看見。
+  },
+  {
+    title:"透明的孩子",
+    tag:"THE WINGLESS CHILD",
+    img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg",
+    zh:`有些人活著，卻從未被看見。
 
 無國籍男孩 Evan，在被遺棄與忽視中成長，渴望被命名、被記住。直到他遇見同樣失去至親的大體化妝師靜瀾，兩個孤獨的靈魂短暫相依，卻終將被命運分開。
 
 當世界選擇忽視，你還相信自己的存在嗎？`,
-en:`Some people are alive, yet never truly seen.
+    en:`Some people are alive, yet never truly seen.
 
 Evan, a stateless boy, grows up abandoned and overlooked, longing to be named—to be remembered. Until he meets Jinglan, a mortuary makeup artist who has also lost someone dear. Two solitary souls find brief solace in each other, only to be parted by fate.
 
 When the world chooses to look away, do you still believe in your own existence?`
-},
-
-{
-title:"煙燻屋",
-tag:"THROUGH THE SMOKE",
-img:"海報/20260326_TTS_poster_v01.png",
-zh:`有些距離，不只是時間，而是說不出口的過去。
+  },
+  {
+    title:"煙燻屋",
+    tag:"THROUGH THE SMOKE",
+    img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png",
+    zh:`有些距離，不只是時間，而是說不出口的過去。
 
 瑞恩在多年離家後重返新加坡，面對與父親未解的心結。在煙霧瀰漫的記憶與信仰之中，他試圖透過影像梳理過去，也重新尋找自己的人生方向。
 
 當記憶無法散去，你是否還有勇氣回頭面對？`,
-en:`Some distances are not measured by time, but by the past left unspoken.
+    en:`Some distances are not measured by time, but by the past left unspoken.
 
 After years away, Ryan returns to Singapore to confront the unresolved distance between himself and his father. Amid smoke-laden memories and questions of faith, he turns to filmmaking to piece together the past—and to rediscover his own direction.
 
 When memories refuse to fade, do you still have the courage to turn back and face them?`
-},
-
-{
-title:"真話",
-tag:"MAKOTO",
-img:"海報/Screenshot 2026-04-07 at 02.42.06.png",
-zh:`有些謊言，是為了讓人繼續被愛。
+  },
+  {
+    title:"真話",
+    tag:"MAKOTO",
+    img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/b9bad7240b116215ad2a69310096fe3bf14a79ff/%E6%B5%B7%E5%A0%B1/Screenshot%202026-04-07%20at%2002.42.06.png",
+    zh:`有些謊言，是為了讓人繼續被愛。
 
 東雲眞在父親失去記憶後，透過「出租家族」重現母親的身影，卻在過程中逐漸看見被隱藏的真相。
-
 眼見未必為真，真相或許從不在眼前，而在心裡。
 
 當虛假的關係承載真實的情感，愛，是否仍然成立？`,
-en:`Some lies exist so that love can endure.
+    en:`Some lies exist so that love can endure.
 
 After his father loses his memory, Shinonome Makoto turns to a “rental family” service to recreate the presence of his mother. Yet as the illusion unfolds, he begins to uncover truths long kept hidden.
-
 What we see is not always real; perhaps truth has never resided before our eyes, but within the heart.
 
 When fabricated relationships come to carry genuine emotion, does love still remain true?`
-},
-
-{
-title:"瘋籠",
-tag:"THE MAD CAGE",
-img:"海報/《瘋籠》POSTER.JPG",
-zh:`有些人以為逃出了牢籠，卻只是墮入了另一個更大的深淵。
+  },
+  {
+    title:"瘋籠",
+    tag:"THE MAD CAGE",
+    img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/main/%E6%B5%B7%E5%A0%B1/%E3%80%8A%E7%98%8B%E7%B1%A0%E3%80%8BPOSTER.JPG",
+    zh:`有些人以為逃出了牢籠，卻只是墮入了另一個更大的深淵。
 
 王俊熙因童年創傷患上 PTSD，在一次失控後被送入精神病院，卻意外揭開院內正榨取病人情感來研發一個AI情感App《知己》。
-
 他試圖逃離，卻在付出慘痛代價後發現，外面的世界，早已沉溺於一場虛假的陪伴之中。
 
 當真相可以摧毀你所依賴的一切，你會選擇面對，還是視而不見？`,
-en:`Some believe they’ve escaped a cage, only to fall into a deeper abyss.
+    en:`Some believe they’ve escaped a cage, only to fall into a deeper abyss.
 
 Haunted by childhood trauma, Wang Junxi suffers from PTSD and is institutionalized after a violent breakdown. Inside the psychiatric facility, he uncovers a hidden operation—one that extracts patients’ emotions to develop an AI companion app, Confidant.
-
 As he attempts to escape, he pays a devastating price, only to realize that the world outside has already surrendered to an illusion of companionship.
 
 When the truth has the power to shatter everything you depend on, would you choose to face it—or turn away?`
-}
-
+  }
 ];
 
-const gallery = document.getElementById("gallery");
-const overlay = document.getElementById("overlay");
+const posterGrid = document.getElementById("posterGrid");
+const reader = document.getElementById("reader");
+const backBtn = document.getElementById("backBtn");
+const readerImg = document.getElementById("readerImg");
+const readerTag = document.getElementById("readerTag");
+const readerTitle = document.getElementById("readerTitle");
+const readerZh = document.getElementById("readerZh");
+const readerEn = document.getElementById("readerEn");
+const langSwitch = document.getElementById("langSwitch");
+const langBtns = langSwitch.querySelectorAll(".lang-btn");
 
-data.forEach(item=>{
-  const el=document.createElement("div");
+let currentLang = "zh";
+let currentItem = null;
 
-  el.innerHTML=`
-  <div class="poster-card">
-    <img src="${item.img}">
-    <div class="poster-info">
-      <div class="poster-tag">${item.tag}</div>
-      <h2 class="poster-title">${item.title}</h2>
+function renderGallery() {
+  data.forEach((item, index) => {
+    const btn = document.createElement("button");
+    btn.className = "poster-card";
+    btn.setAttribute("type", "button");
+    btn.setAttribute("aria-label", `Open ${item.title}`);
 
-      <div class="lang-switch">
-        <button class="lang-btn active" data-lang="zh">中</button>
-        <button class="lang-btn" data-lang="en">EN</button>
+    btn.innerHTML = `
+      <div class="poster-thumb">
+        <img src="${item.img}" alt="${item.title} Poster" loading="lazy">
       </div>
+      <div class="poster-meta">
+        <div class="poster-tag">${item.tag}</div>
+        <h3 class="poster-name">${item.title}</h3>
+        <div class="poster-hint">點擊閱讀完整內容</div>
+      </div>
+    `;
 
-      <div class="text zh">${item.zh}</div>
-      <div class="text en hidden">${item.en}</div>
-    </div>
-  </div>`;
+    btn.addEventListener("click", () => openReader(index));
+    posterGrid.appendChild(btn);
+  });
+}
 
-  const card=el.querySelector(".poster-card");
-  const img=el.querySelector("img");
+function setLanguage(lang) {
+  currentLang = lang;
+  if (lang === "zh") {
+    readerZh.classList.remove("hidden");
+    readerEn.classList.add("hidden");
+    langSwitch.classList.remove("en");
+  } else {
+    readerEn.classList.remove("hidden");
+    readerZh.classList.add("hidden");
+    langSwitch.classList.add("en");
+  }
 
-  img.onclick=()=>{
-    document.querySelectorAll(".poster-card").forEach(c=>c.classList.remove("active"));
-    card.classList.add("active");
-    overlay.classList.add("active");
-  };
-
-  overlay.onclick=()=>{
-    document.querySelectorAll(".poster-card").forEach(c=>c.classList.remove("active"));
-    overlay.classList.remove("active");
-  };
-
-  const zh=el.querySelector(".zh");
-  const en=el.querySelector(".en");
-  const btns=el.querySelectorAll(".lang-btn");
-
-  btns.forEach(btn=>{
-    btn.onclick=()=>{
-      btns.forEach(b=>b.classList.remove("active"));
+  langBtns.forEach(btn => {
+    if (btn.dataset.lang === lang) {
       btn.classList.add("active");
-
-      if(btn.dataset.lang==="zh"){
-        zh.classList.remove("hidden");
-        en.classList.add("hidden");
-      }else{
-        en.classList.remove("hidden");
-        zh.classList.add("hidden");
-      }
+    } else {
+      btn.classList.remove("active");
     }
   });
+}
 
-  gallery.appendChild(el);
+function openReader(index) {
+  currentItem = data[index];
+  readerImg.src = currentItem.img;
+  readerImg.alt = currentItem.title + " Poster";
+  readerTag.textContent = currentItem.tag;
+  readerTitle.textContent = currentItem.title;
+  readerZh.textContent = currentItem.zh;
+  readerEn.textContent = currentItem.en;
+
+  setLanguage(currentLang);
+  reader.classList.add("active");
+  document.body.style.overflow = "hidden";
+  document.querySelector(".reader-scroll").scrollTop = 0;
+}
+
+function closeReader() {
+  reader.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+langBtns.forEach(btn => {
+  btn.addEventListener("click", () => setLanguage(btn.dataset.lang));
 });
+
+backBtn.addEventListener("click", closeReader);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && reader.classList.contains("active")) {
+    closeReader();
+  }
+});
+
+renderGallery();
 </script>
 
 </body>
