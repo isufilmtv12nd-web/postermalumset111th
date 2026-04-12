@@ -1,218 +1,188 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Poster Showcase</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-* { box-sizing: border-box; }
-
-:root{
-  --bg: transparent;
-  --text: #111111;
-  --sub: rgba(17,17,17,.62);
-  --glass: rgba(255,255,255,.72);
-  --glass-line: rgba(255,255,255,.45);
-  --shadow: 0 20px 50px rgba(0,0,0,.10);
-  --radius-card: 34px;
-  --radius-info: 26px;
-}
-
-html, body{
-  margin:0;
-  padding:0;
-  background:var(--bg);
-  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", "Noto Sans TC", sans-serif;
-}
+*{box-sizing:border-box;}
 
 body{
-  display:flex;
-  justify-content:center;
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
 }
 
+/* 背景遮罩 */
+.overlay{
+  position:fixed;
+  top:0;left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:.4s;
+  z-index:1;
+}
+.overlay.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* 外層 */
 .gallery{
-  width:min(1200px, calc(100% - 28px));
-  margin:24px auto 40px;
-  display:flex;
-  flex-direction:column;
-  gap:42px;
-  align-items:center;
+  text-align:center;
+  padding:20px 10px;
+  position:relative;
+  z-index:2;
 }
 
-/* 每張卡片置中 */
+/* 卡片 */
 .poster-card{
   position:relative;
-  width:min(420px, 92vw);
-  aspect-ratio: 3 / 4.6;
-  border-radius:var(--radius-card);
+  display:inline-block;
+  width:100%;
+  max-width:420px;
+  height:0;
+  padding-top:140%;
+  border-radius:28px;
   overflow:hidden;
-  background:#e9e9eb;
-  box-shadow: var(--shadow);
-  isolation:isolate;
+  background:#eee;
+  box-shadow:0 20px 40px rgba(0,0,0,.1);
+  margin-bottom:30px;
+  transition:.3s;
 }
 
-/* 圖片完整顯示 */
+/* 圖片 */
 .poster-card img{
+  position:absolute;
   width:100%;
   height:100%;
   object-fit:cover;
-  display:block;
+  cursor:pointer;
 }
 
-/* 中間置中的玻璃資訊卡 */
+/* 👉 右側卡（Apple動畫） */
 .poster-info{
   position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
-  width:calc(100% - 56px);
-  max-width:320px;
-  padding:18px 18px 16px;
-  border-radius:var(--radius-info);
-  background:var(--glass);
-  border:1px solid var(--glass-line);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  color:var(--text);
-  text-align:left;
-  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  top:0;
+  right:-100%;
+  width:78%;
+  height:100%;
+  background:rgba(255,255,255,.95);
+  padding:22px;
+  border-radius:22px 0 0 22px;
+
+  transform:translateX(40px);
+  opacity:0;
+
+  transition:
+    transform .5s cubic-bezier(.22,1,.36,1),
+    opacity .4s ease,
+    right .4s ease;
+
+  overflow:auto;
 }
 
-/* 上方小字 */
-.poster-tagline{
-  margin:0 0 8px;
-  font-size:11px;
-  letter-spacing:1.8px;
-  color:rgba(17,17,17,.48);
-  font-weight:700;
-  text-transform:uppercase;
+/* 開啟 */
+.poster-card.active .poster-info{
+  right:0;
+  transform:translateX(0);
+  opacity:1;
 }
 
 /* 標題 */
 .poster-title{
+  font-size:24px;
   margin:0;
-  font-size:27px;
-  line-height:1.08;
   font-weight:700;
-  letter-spacing:-0.03em;
-  color:#111;
 }
 
-/* 語言切換 */
+/* tag */
+.poster-tagline{
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:#888;
+  margin-bottom:10px;
+}
+
+/* 👉 Apple式語言切換 */
 .lang-switch{
   margin-top:14px;
+  position:relative;
   display:inline-flex;
-  gap:6px;
-  padding:4px;
+  background:#eee;
   border-radius:999px;
-  background:rgba(255,255,255,.46);
-  border:1px solid rgba(255,255,255,.42);
+  padding:3px;
+}
+
+.lang-slider{
+  position:absolute;
+  top:3px;
+  left:3px;
+  width:50%;
+  height:calc(100% - 6px);
+  background:#111;
+  border-radius:999px;
+  transition:.3s cubic-bezier(.22,1,.36,1);
+}
+
+.lang-switch.en .lang-slider{
+  left:50%;
 }
 
 .lang-btn{
-  appearance:none;
-  border:0;
-  padding:7px 12px;
-  border-radius:999px;
-  background:transparent;
-  color:rgba(17,17,17,.66);
-  cursor:pointer;
+  position:relative;
+  z-index:2;
+  padding:6px 12px;
+  border:none;
+  background:none;
   font-size:12px;
   font-weight:600;
-  transition:all .22s ease;
+  cursor:pointer;
+  color:#555;
 }
 
 .lang-btn.active{
-  background:#ffffff;
-  color:#111;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  color:#fff;
 }
 
 /* 文字 */
 .text{
   margin-top:14px;
   font-size:14px;
-  line-height:1.7;
-  color:var(--sub);
-  min-height:72px;
+  line-height:1.6;
 }
 
-.hidden{
-  display:none;
-}
+.hidden{display:none;}
 
 /* 按鈕 */
 .poster-btn{
-  margin-top:14px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:10px 14px;
-  border-radius:999px;
+  display:block;
+  margin-top:16px;
+  padding:10px;
   background:#111;
   color:#fff;
+  text-align:center;
+  border-radius:999px;
   text-decoration:none;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:.01em;
-  transition:transform .22s ease, opacity .22s ease, background .22s ease;
 }
 
-.poster-btn:hover{
-  transform:translateY(-1px);
-  opacity:.92;
-}
-
-/* Apple 感的微動態 */
-.poster-card{
-  transition:transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s cubic-bezier(.22,1,.36,1);
-}
-
-.poster-card:hover{
-  transform:translateY(-4px);
-  box-shadow: 0 28px 60px rgba(0,0,0,.14);
-}
-
-/* 手機版 */
-@media (max-width: 640px){
-  .gallery{
-    width:min(100%, calc(100% - 18px));
-    gap:28px;
-    margin:14px auto 28px;
-  }
-
-  .poster-card{
-    width:min(390px, 100%);
-    aspect-ratio: 3 / 4.8;
-    border-radius:28px;
-  }
-
+/* 手機 */
+@media(max-width:640px){
   .poster-info{
-    width:calc(100% - 32px);
-    max-width:none;
-    padding:16px 16px 14px;
-    border-radius:22px;
-  }
-
-  .poster-title{
-    font-size:23px;
-  }
-
-  .poster-tagline{
-    font-size:10px;
-    margin-bottom:7px;
-  }
-
-  .text{
-    font-size:13px;
-    line-height:1.65;
-    min-height:auto;
-  }
-
-  .poster-btn{
+    top:auto;
+    bottom:-100%;
+    right:0;
     width:100%;
-    padding:11px 14px;
+    height:60%;
+    border-radius:20px 20px 0 0;
+    transform:translateY(40px);
+  }
+
+  .poster-card.active .poster-info{
+    bottom:0;
+    transform:translateY(0);
   }
 }
 </style>
@@ -220,6 +190,7 @@ body{
 
 <body>
 
+<div class="overlay" id="overlay"></div>
 <div class="gallery" id="gallery"></div>
 
 <script>
@@ -228,86 +199,165 @@ const data = [
 title:"水管嬰兒",
 tag:"BLOOD TUBE BABY",
 img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg",
-link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E6%B0%B4%E7%AE%A1%E5%AC%B0%E5%85%92-btb?authuser=0",
-zh:"有些痛，不在身體，而在被迫承受的「意義」。當社會早已設下框架，女性是否真的能決定自己的身體與生命？",
-en:"Some pain does not reside in the body, but in the meaning one is forced to bear. Can women truly decide for their own bodies?"
+link:"#",
+zh:"有些痛，不在身體，而在被迫承受的「意義」。
+
+一個女人在廚房熬著苦澀的藥，只想把那場「意外」連根拔起；
+另一個女人在冷白的診間裡，試圖向冰冷的器械乞討一個生命。
+迴盪在水管裡的，是還未出世的哀求，還是早已破碎的自尊？
+當社會設下的框架變成一座子宮，她們便成了被禁錮的容器。
+
+直到那聲啼哭響起——
+留下來的，究竟是救贖，還是無法擺脫的餘燼？",
+en:"Some pain does not reside in the body, but in the “meaning” one is forced to bear.
+
+In a dim kitchen, a woman simmers a bitter concoction, desperate to uproot an “accident” from her life.
+Elsewhere, under the cold white lights of a clinic, another woman pleads with unfeeling machines for a life she cannot conceive.
+
+Echoing through the pipes—
+is it the plea of an unborn child, or the fragments of a dignity already shattered?
+
+When society’s imposed framework becomes a womb,
+they are reduced to vessels—confined, contained, and defined.
+
+Until a cry finally breaks the silence—
+what remains in its wake: redemption,
+or embers that can never be extinguished?"
 },
 {
 title:"透明的孩子",
 tag:"THE WINGLESS CHILD",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg",
-link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E9%80%8F%E6%98%8E%E7%9A%84%E5%AD%A9%E5%AD%90-twc?authuser=0",
-zh:"有些人活著，卻從未被看見。",
-en:"Some people live, yet remain unseen."
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg",
+link:"#",
+zh:"有些人活著，卻從未被看見。
+
+無國籍男孩 Evan，在被遺棄與忽視中成長，渴望被命名、被記住。直到他遇見同樣失去至親的大體化妝師靜瀾，兩個孤獨的靈魂短暫相依，卻終將被命運分開。
+
+當世界選擇忽視，你還相信自己的存在嗎？
+",
+en:"Some people are alive, yet never truly seen.
+
+Evan, a stateless boy, grows up abandoned and overlooked, longing to be named—to be remembered. Until he meets Jinglan, a mortuary makeup artist who has also lost someone dear. Two solitary souls find brief solace in each other, only to be parted by fate.
+
+When the world chooses to look away, do you still believe in your own existence?"
 },
 {
 title:"煙燻屋",
 tag:"THROUGH THE SMOKE",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/924a0647385fd7f96e2c2ed21704090330a0f0b7/%E6%B5%B7%E5%A0%B1/20260326_TTS_poster_v01.png",
-link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%85%99%E7%87%BB%E5%B1%8B-tts?authuser=0",
-zh:"有些距離，不只是時間，而是說不出口的過去。",
-en:"Some distances are not time, but unspoken pasts."
-},
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg",
+link:"#",
+zh:"有些距離，不只是時間，而是說不出口的過去。
+
+瑞恩在多年離家後重返新加坡，面對與父親未解的心結。在煙霧瀰漫的記憶與信仰之中，他試圖透過影像梳理過去，也重新尋找自己的人生方向。
+
+當記憶無法散去，你是否還有勇氣回頭面對？",
+en:"Some distances are not measured by time, but by the past left unspoken.
+  
+After years away, Ryan returns to Singapore to confront the unresolved distance between himself and his father. Amid smoke-laden memories and questions of faith, he turns to filmmaking to piece together the past—and to rediscover his own direction.
+
+When memories refuse to fade, do you still have the courage to turn back and face them?"
+},  
 {
 title:"真話",
 tag:"MAKOTO",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260326_zh_poster_v01.jpg",
-link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%9C%9F%E8%A9%B1-som?authuser=0",
-zh:"有些謊言，是為了讓人繼續被愛。",
-en:"Some lies are told so one may continue to be loved."
-},
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/46deae50711aef010865469eec7afd164f2ff7fe/%E6%B5%B7%E5%A0%B1/20260325_BTB_%E6%B5%B7%E5%A0%B1_.jpg",
+link:"#",
+zh:"有些謊言，是為了讓人繼續被愛。
+
+東雲眞在父親失去記憶後，透過「出租家族」重現母親的身影，卻在過程中逐漸看見被隱藏的真相。眼見未必為真，真相或許從不在眼前，而在心裡。
+
+當虛假的關係承載真實的情感，愛，是否仍然成立？
+",
+en:"Some lies exist so that love can endure.
+  
+After his father loses his memory, Shinonome Makoto turns to a “rental family” service to recreate the presence of his mother. Yet as the illusion unfolds, he begins to uncover truths long kept hidden. What we see is not always real; perhaps truth has never resided before our eyes, but within the heart.
+
+When fabricated relationships come to carry genuine emotion, does love still remain true?"
+},  
 {
 title:"瘋籠",
 tag:"THE MAD CAGE",
-img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/main/%E6%B5%B7%E5%A0%B1/%E3%80%8A%E7%98%8B%E7%B1%A0%E3%80%8BPOSTER.JPG",
-link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%98%8B%E7%B1%A0-tmc?authuser=0",
-zh:"有些人逃出了牢籠，卻從未真正自由。",
-en:"Some escape the cage, yet never find freedom."
+img:"https://raw.githubusercontent.com/isufilmtv12nd-web/testing/fbb7fda070c3691e91cab0e9835cc8400653e9df/%E6%B5%B7%E5%A0%B1/20260325_TWC_poster01.jpg",
+link:"#",
+zh:"有些人以為逃出了牢籠，卻只是墮入了另一個更大的深淵。
+
+王俊熙因童年創傷患上 PTSD，在一次失控後被送入精神病院，卻意外揭開院內正榨取病人情感來研發一個AI情感App《知己》。他試圖逃離，卻在付出慘痛代價後發現，外面的世界，早已沉溺於一場虛假的陪伴之中。
+
+當真相可以摧毀你所依賴的一切，你會選擇面對，還是視而不見？",
+en:"Some believe they’ve escaped a cage, only to fall into a deeper abyss.
+
+Haunted by childhood trauma, Wang Junxi suffers from PTSD and is institutionalized after a violent breakdown. Inside the psychiatric facility, he uncovers a hidden operation—one that extracts patients’ emotions to develop an AI companion app, Confidant. As he attempts to escape, he pays a devastating price, only to realize that the world outside has already surrendered to an illusion of companionship.
+
+When the truth has the power to shatter everything you depend on, would you choose to face it—or turn away?
+"
 }
 ];
 
 const gallery = document.getElementById("gallery");
+const overlay = document.getElementById("overlay");
 
-data.forEach((item)=>{
+data.forEach(item=>{
   const el = document.createElement("div");
+
   el.innerHTML = `
-    <div class="poster-card">
-      <img src="${item.img}" alt="${item.title}">
+  <div class="poster-card">
+    <img src="${item.img}">
+    <div class="poster-info">
 
-      <div class="poster-info">
-        <div class="poster-tagline">${item.tag}</div>
-        <h2 class="poster-title">${item.title}</h2>
+      <div class="poster-tagline">${item.tag}</div>
+      <h2 class="poster-title">${item.title}</h2>
 
-        <div class="lang-switch">
-          <button class="lang-btn active" data-lang="zh">中文</button>
-          <button class="lang-btn" data-lang="en">English</button>
-        </div>
-
-        <div class="text zh">${item.zh}</div>
-        <div class="text en hidden">${item.en}</div>
-
-        <a class="poster-btn" href="${item.link}" target="_top">View Full Page</a>
+      <div class="lang-switch">
+        <div class="lang-slider"></div>
+        <button class="lang-btn active" data-lang="zh">中</button>
+        <button class="lang-btn" data-lang="en">EN</button>
       </div>
+
+      <div class="text zh">${item.zh}</div>
+      <div class="text en hidden">${item.en}</div>
+
+      <a class="poster-btn" href="${item.link}" target="_top">View</a>
     </div>
+  </div>
   `;
 
+  const card = el.querySelector(".poster-card");
+  const img = el.querySelector("img");
+
+  // 👉 開啟
+  img.onclick = ()=>{
+    document.querySelectorAll(".poster-card").forEach(c=>c.classList.remove("active"));
+    card.classList.add("active");
+    overlay.classList.add("active");
+  };
+
+  // 👉 關閉
+  overlay.onclick = ()=>{
+    document.querySelectorAll(".poster-card").forEach(c=>c.classList.remove("active"));
+    overlay.classList.remove("active");
+  };
+
+  // 👉 語言切換
   const zh = el.querySelector(".zh");
   const en = el.querySelector(".en");
+  const switchBox = el.querySelector(".lang-switch");
   const btns = el.querySelectorAll(".lang-btn");
 
-  btns.forEach(btn => {
-    btn.onclick = () => {
-      btns.forEach(b => b.classList.remove("active"));
+  btns.forEach(btn=>{
+    btn.onclick=()=>{
+      btns.forEach(b=>b.classList.remove("active"));
       btn.classList.add("active");
 
-      if(btn.dataset.lang === "zh"){
+      if(btn.dataset.lang==="zh"){
+        switchBox.classList.remove("en");
         zh.classList.remove("hidden");
         en.classList.add("hidden");
-      } else {
+      }else{
+        switchBox.classList.add("en");
         en.classList.remove("hidden");
         zh.classList.add("hidden");
       }
-    };
+    }
   });
 
   gallery.appendChild(el);
