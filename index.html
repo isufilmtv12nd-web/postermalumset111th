@@ -1,241 +1,255 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Poster Gallery</title>
 
 <style>
-*{
-  box-sizing:border-box;
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif;
 }
 
-html,body{
-  margin:0;
-  padding:0;
-  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;
-  background:transparent;
+body {
+  overflow-x: hidden;
 }
 
-/* 背景遮罩 */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.38);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .35s ease;
-  z-index:10;
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.38);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  z-index: 10;
 }
-.overlay.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-/* 外層 */
-.gallery{
-  width:min(1200px, calc(100% - 24px));
-  margin:0 auto;
-  padding:20px 0 30px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:28px;
-  position:relative;
-  z-index:20;
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* 卡片 */
-.poster-card{
-  position:relative;
-  width:100%;
-  max-width:430px;
-  aspect-ratio:2 / 3;
-  border-radius:28px;
-  overflow:hidden;
-  background:#e9e9e9;
+.gallery {
+  width: min(1200px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 20px 0 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  z-index: 20;
+}
+
+.poster-card {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  aspect-ratio: 2 / 3;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #111;
   box-shadow:
     0 12px 30px rgba(0,0,0,.12),
     0 2px 10px rgba(0,0,0,.06);
-  transition:transform .35s ease, box-shadow .35s ease;
+  transition: transform .35s ease, box-shadow .35s ease;
 }
 
-.poster-card:hover{
-  transform:translateY(-2px);
+.poster-card:hover {
+  transform: translateY(-2px);
   box-shadow:
     0 18px 42px rgba(0,0,0,.16),
     0 4px 14px rgba(0,0,0,.08);
 }
 
-/* 圖片 */
-.poster-card img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  cursor:pointer;
-  background:#111;
+.poster-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+  background: #111;
 }
 
-/* 資訊卡 */
-.poster-info{
-  position:absolute;
-  top:0;
-  right:-100%;
-  width:78%;
-  height:100%;
-  background:rgba(255,255,255,.96);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border-radius:24px 0 0 24px;
-  padding:22px 18px 20px;
-  overflow:auto;
-  opacity:0;
-  transform:translateX(36px);
+.poster-info {
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 78%;
+  height: 100%;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px 0 0 24px;
+  padding: 22px 18px 20px;
+  overflow: auto;
+  opacity: 0;
+  transform: translateX(36px);
   transition:
     right .45s cubic-bezier(.22,1,.36,1),
     transform .45s cubic-bezier(.22,1,.36,1),
     opacity .3s ease;
 }
 
-/* 開啟 */
-.poster-card.active .poster-info{
-  right:0;
-  opacity:1;
-  transform:translateX(0);
+.poster-card.active .poster-info {
+  right: 0;
+  opacity: 1;
+  transform: translateX(0);
 }
 
-/* 標題 */
-.poster-tagline{
-  font-size:11px;
-  letter-spacing:1.8px;
-  color:#7a7a7a;
-  font-weight:600;
-  margin-bottom:8px;
+.poster-tagline {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  color: #7a7a7a;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
-.poster-title{
-  margin:0;
-  font-size:25px;
-  line-height:1.15;
-  color:#111;
-  font-weight:800;
+.poster-title {
+  margin: 0;
+  font-size: 25px;
+  line-height: 1.15;
+  color: #111;
+  font-weight: 800;
 }
 
-/* 切換按鈕 */
-.lang-switch{
-  margin-top:14px;
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  background:#ececec;
-  border-radius:999px;
-  padding:3px;
+.lang-switch {
+  margin-top: 14px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: #ececec;
+  border-radius: 999px;
+  padding: 3px;
 }
 
-.lang-slider{
-  position:absolute;
-  top:3px;
-  left:3px;
-  width:calc(50% - 3px);
-  height:calc(100% - 6px);
-  background:#111;
-  border-radius:999px;
-  transition:left .3s cubic-bezier(.22,1,.36,1);
+.lang-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  background: #111;
+  border-radius: 999px;
+  transition: left .3s cubic-bezier(.22,1,.36,1);
 }
 
-.lang-switch.en .lang-slider{
-  left:calc(50% + 0px);
+.lang-switch.en .lang-slider {
+  left: calc(50% + 0px);
 }
 
-.lang-btn{
-  position:relative;
-  z-index:2;
-  border:none;
-  background:transparent;
-  padding:7px 14px;
-  font-size:12px;
-  font-weight:700;
-  color:#666;
-  cursor:pointer;
-  min-width:48px;
+.lang-btn {
+  position: relative;
+  z-index: 2;
+  border: none;
+  background: transparent;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+  cursor: pointer;
+  min-width: 48px;
 }
 
-.lang-btn.active{
-  color:#fff;
+.lang-btn.active {
+  color: #fff;
 }
 
-/* 文字 */
-.text{
-  margin-top:14px;
-  font-size:14px;
-  line-height:1.72;
-  color:#222;
-  white-space:pre-line;
+.text {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.72;
+  color: #222;
+  white-space: pre-line;
 }
 
-.hidden{
-  display:none;
+.hidden {
+  display: none;
 }
 
-/* 關閉按鈕 */
-.close-btn{
-  position:absolute;
-  top:12px;
-  right:12px;
-  width:32px;
-  height:32px;
-  border:none;
-  border-radius:999px;
-  background:rgba(17,17,17,.08);
-  color:#111;
-  font-size:18px;
-  line-height:1;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(17,17,17,.08);
+  color: #111;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 手機版 */
-@media (max-width:640px){
-  .gallery{
-    width:min(100%, calc(100% - 16px));
-    padding:14px 0 24px;
-    gap:20px;
+.image-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 18px;
+  color: rgba(255,255,255,.75);
+  font-size: 14px;
+  line-height: 1.6;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)),
+    #111;
+}
+
+.poster-card.image-error .image-fallback {
+  display: flex;
+}
+
+.poster-card.image-error img {
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .gallery {
+    width: min(100%, calc(100% - 16px));
+    padding: 14px 0 24px;
+    gap: 20px;
   }
 
-  .poster-card{
-    max-width:390px;
-    border-radius:24px;
+  .poster-card {
+    max-width: 390px;
+    border-radius: 24px;
   }
 
-  .poster-info{
-    top:auto;
-    bottom:-100%;
-    right:0;
-    width:100%;
-    height:62%;
-    border-radius:22px 22px 0 0;
-    transform:translateY(34px);
-    padding:20px 16px 18px;
+  .poster-info {
+    top: auto;
+    bottom: -100%;
+    right: 0;
+    width: 100%;
+    height: 62%;
+    border-radius: 22px 22px 0 0;
+    transform: translateY(34px);
+    padding: 20px 16px 18px;
   }
 
-  .poster-card.active .poster-info{
-    bottom:0;
-    transform:translateY(0);
+  .poster-card.active .poster-info {
+    bottom: 0;
+    transform: translateY(0);
   }
 
-  .poster-title{
-    font-size:22px;
+  .poster-title {
+    font-size: 22px;
   }
 
-  .text{
-    font-size:13.5px;
-    line-height:1.68;
+  .text {
+    font-size: 13.5px;
+    line-height: 1.68;
   }
 }
 </style>
@@ -345,6 +359,7 @@ data.forEach(item => {
   wrap.innerHTML = `
     <div class="poster-card">
       <img src="${item.img}" alt="${item.title} Poster" loading="lazy">
+      <div class="image-fallback">${item.title}<br>圖片載入失敗</div>
       <div class="poster-info">
         <button class="close-btn" aria-label="Close">×</button>
         <div class="poster-tagline">${item.tag}</div>
@@ -374,6 +389,11 @@ data.forEach(item => {
     closeAllCards();
     card.classList.add("active");
     overlay.classList.add("active");
+  });
+
+  img.addEventListener("error", () => {
+    card.classList.add("image-error");
+    console.log("Image failed:", item.title, item.img);
   });
 
   closeBtn.addEventListener("click", (e) => {
