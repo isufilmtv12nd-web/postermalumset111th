@@ -9,77 +9,91 @@
 *{box-sizing:border-box}
 
 :root{
-  --bg:#09090c;
-  --bg2:#11131a;
   --text:#f5f5f7;
-  --muted:rgba(255,255,255,.56);
-  --line:rgba(255,255,255,.08);
+  --muted:rgba(255,255,255,.62);
+  --soft:rgba(255,255,255,.38);
+  --line:rgba(255,255,255,.10);
+  --line-strong:rgba(255,255,255,.16);
   --glass:rgba(255,255,255,.08);
-  --glass-strong:rgba(255,255,255,.14);
-  --shadow:0 30px 80px rgba(0,0,0,.42);
+  --glass-strong:rgba(255,255,255,.12);
+  --shadow:0 30px 80px rgba(0,0,0,.28);
+  --shadow-hover:0 42px 110px rgba(0,0,0,.36);
+  --radius-xl:32px;
+  --radius-lg:26px;
+  --radius-md:20px;
 }
 
 html,body{
   margin:0;
   padding:0;
-  background: transparent;
+  background:transparent;
   color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang TC","Noto Sans TC",sans-serif;
 }
 
 body.lock{
   overflow:hidden;
 }
 
-/* 首頁 */
+/* 外層 */
+.shell{
+  width:100%;
+  min-height:100vh;
+  padding:28px 0 80px;
+  background:transparent;
+}
+
+/* 頂部 */
 .hero{
-  width:min(900px, calc(100% - 28px));
+  width:min(1100px, calc(100% - 28px));
   margin:0 auto;
-  padding:34px 0 14px;
   text-align:center;
+  padding:18px 0 8px;
 }
 
 .hero-kicker{
   font-size:12px;
-  letter-spacing:2.6px;
+  letter-spacing:2.8px;
   text-transform:uppercase;
   color:var(--muted);
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
 .hero-title{
   margin:0;
-  font-size:clamp(30px, 6vw, 56px);
-  line-height:1.04;
+  font-size:clamp(34px, 6vw, 68px);
+  line-height:1.02;
   font-weight:800;
+  letter-spacing:-0.03em;
 }
 
 .hero-sub{
-  margin:14px auto 0;
-  width:min(700px,100%);
-  color:var(--muted);
+  width:min(760px, 100%);
+  margin:16px auto 0;
   font-size:15px;
-  line-height:1.8;
+  line-height:1.9;
+  color:var(--muted);
 }
 
+/* 展示區 */
 .gallery{
-  width:min(900px, calc(100% - 28px));
+  width:min(1180px, calc(100% - 28px));
   margin:0 auto;
-  padding:14px 0 70px;
-  display:flex;
-  flex-direction:column;
-  gap:64px;
+  padding:34px 0 0;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:32px 28px;
 }
 
-/* 海報卡 */
 .poster-card{
-  width:100%;
+  position:relative;
   display:flex;
   flex-direction:column;
   align-items:center;
   cursor:pointer;
   opacity:0;
-  transform:translateY(28px);
-  animation:fadeUp .8s ease forwards;
+  transform:translateY(26px);
+  animation:fadeUp .9s cubic-bezier(.22,1,.36,1) forwards;
 }
 
 .poster-card:nth-child(2){animation-delay:.08s}
@@ -87,22 +101,35 @@ body.lock{
 .poster-card:nth-child(4){animation-delay:.24s}
 .poster-card:nth-child(5){animation-delay:.32s}
 
-.poster-frame{
+.poster-wrap{
   position:relative;
   width:100%;
-  max-width:430px;
+  display:flex;
+  justify-content:center;
+}
+
+.poster-frame{
+  position:relative;
+  width:min(100%, 430px);
   aspect-ratio:2/3;
-  border-radius:30px;
+  border-radius:var(--radius-xl);
   overflow:hidden;
-  background:#141414;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
   box-shadow:var(--shadow);
-  border:1px solid rgba(255,255,255,.05);
-  transition:transform .5s ease, box-shadow .5s ease, filter .5s ease;
+  transition:
+    transform .7s cubic-bezier(.22,1,.36,1),
+    box-shadow .7s cubic-bezier(.22,1,.36,1),
+    border-color .4s ease,
+    filter .4s ease;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
 }
 
 .poster-card:hover .poster-frame{
-  transform:translateY(-6px) scale(1.01);
-  box-shadow:0 40px 100px rgba(0,0,0,.5);
+  transform:translateY(-8px) scale(1.012);
+  box-shadow:var(--shadow-hover);
+  border-color:rgba(255,255,255,.15);
 }
 
 .poster-frame img{
@@ -110,29 +137,52 @@ body.lock{
   height:100%;
   object-fit:cover;
   display:block;
-  transition:transform 1.1s ease;
+  transition:transform 1.1s cubic-bezier(.22,1,.36,1), filter .45s ease;
 }
 
 .poster-card:hover .poster-frame img{
-  transform:scale(1.04);
+  transform:scale(1.035);
+}
+
+.poster-reflect{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 60%, rgba(255,255,255,.06) 100%);
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+
+.poster-vignette{
+  position:absolute;
+  inset:auto 0 0 0;
+  height:42%;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,.42));
+  pointer-events:none;
 }
 
 .poster-glow{
   position:absolute;
-  inset:auto 0 0 0;
-  height:40%;
-  background:linear-gradient(180deg, transparent, rgba(0,0,0,.55));
+  width:72%;
+  height:44px;
+  left:50%;
+  bottom:-18px;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse at center, rgba(255,255,255,.12), transparent 70%);
+  filter:blur(18px);
+  opacity:.65;
   pointer-events:none;
 }
 
 .poster-meta{
   margin-top:18px;
   text-align:center;
+  max-width:430px;
 }
 
 .poster-tag{
   font-size:12px;
-  letter-spacing:2px;
+  letter-spacing:2.4px;
   color:var(--muted);
   text-transform:uppercase;
   margin-bottom:8px;
@@ -140,15 +190,16 @@ body.lock{
 
 .poster-title{
   margin:0;
-  font-size:26px;
-  font-weight:750;
-  line-height:1.18;
+  font-size:28px;
+  line-height:1.14;
+  font-weight:760;
+  letter-spacing:-0.02em;
 }
 
 .poster-hint{
   margin-top:10px;
   font-size:13px;
-  color:rgba(255,255,255,.45);
+  color:var(--soft);
 }
 
 /* 閱讀模式 */
@@ -159,9 +210,9 @@ body.lock{
   opacity:0;
   pointer-events:none;
   transition:opacity .45s ease;
-  background:
-    radial-gradient(circle at top, rgba(255,255,255,.08), transparent 30%),
-    linear-gradient(180deg, #0c0d12 0%, #09090c 100%);
+  background:rgba(8,8,10,.38);
+  backdrop-filter:blur(26px) saturate(135%);
+  -webkit-backdrop-filter:blur(26px) saturate(135%);
 }
 
 .reader.active{
@@ -176,7 +227,7 @@ body.lock{
 }
 
 .reader-inner{
-  width:min(1020px, calc(100% - 24px));
+  width:min(1180px, calc(100% - 28px));
   margin:0 auto;
   padding:18px 0 40px;
 }
@@ -184,32 +235,45 @@ body.lock{
 .reader-top{
   position:sticky;
   top:0;
-  z-index:10;
+  z-index:20;
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:12px;
-  padding:6px 0 16px;
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+  padding:4px 0 18px;
+}
+
+.top-glass{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  gap:12px;
+  padding:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
 }
 
 .back-btn{
   border:none;
-  border-radius:999px;
-  padding:12px 16px;
-  background:var(--glass);
+  background:rgba(255,255,255,.08);
   color:var(--text);
-  border:1px solid var(--line);
-  cursor:pointer;
+  padding:12px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
   font-size:14px;
   font-weight:650;
-  transition:.25s ease;
+  cursor:pointer;
+  transition:.28s ease;
 }
 
 .back-btn:hover{
-  background:var(--glass-strong);
   transform:translateY(-1px);
+  background:rgba(255,255,255,.14);
 }
 
 .lang-switch{
@@ -217,9 +281,9 @@ body.lock{
   display:inline-flex;
   align-items:center;
   padding:4px;
-  background:var(--glass);
-  border:1px solid var(--line);
   border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
 }
 
 .lang-slider{
@@ -230,7 +294,7 @@ body.lock{
   height:calc(100% - 8px);
   background:#fff;
   border-radius:999px;
-  transition:left .28s cubic-bezier(.22,1,.36,1);
+  transition:left .3s cubic-bezier(.22,1,.36,1);
 }
 
 .lang-switch.en .lang-slider{
@@ -240,8 +304,8 @@ body.lock{
 .lang-btn{
   position:relative;
   z-index:2;
-  min-width:56px;
-  padding:8px 14px;
+  min-width:58px;
+  padding:9px 14px;
   border:none;
   background:transparent;
   color:var(--muted);
@@ -256,22 +320,26 @@ body.lock{
 
 .reader-grid{
   display:grid;
-  grid-template-columns:minmax(320px, 440px) minmax(0,1fr);
-  gap:34px;
+  grid-template-columns:minmax(300px, 460px) minmax(0,1fr);
+  gap:42px;
   align-items:start;
+  padding-top:8px;
 }
 
 .reader-poster{
   position:sticky;
-  top:78px;
+  top:96px;
 }
 
 .reader-poster-box{
-  border-radius:32px;
+  position:relative;
+  border-radius:34px;
   overflow:hidden;
-  background:#151515;
-  box-shadow:0 34px 90px rgba(0,0,0,.48);
-  border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 34px 90px rgba(0,0,0,.28);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
 }
 
 .reader-poster-box img{
@@ -281,42 +349,52 @@ body.lock{
   object-fit:cover;
 }
 
+.reader-poster-box::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 24%, rgba(255,255,255,0) 65%, rgba(255,255,255,.05) 100%);
+  pointer-events:none;
+}
+
 .reader-content{
   min-width:0;
-  padding-top:8px;
+  padding-top:18px;
 }
 
 .reader-tag{
   font-size:12px;
-  letter-spacing:2.4px;
+  letter-spacing:2.5px;
   color:var(--muted);
   text-transform:uppercase;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
 .reader-title{
   margin:0;
-  font-size:clamp(34px, 5vw, 64px);
-  line-height:1.03;
+  font-size:clamp(38px, 5vw, 72px);
+  line-height:1.02;
   font-weight:820;
+  letter-spacing:-0.04em;
 }
 
 .reader-divider{
-  width:86px;
+  width:92px;
   height:1px;
-  background:rgba(255,255,255,.15);
-  margin:22px 0 18px;
+  background:rgba(255,255,255,.14);
+  margin:24px 0 18px;
 }
 
 .reader-text{
   max-width:760px;
   font-size:18px;
-  line-height:2;
-  color:rgba(255,255,255,.92);
+  line-height:2.02;
+  color:rgba(255,255,255,.94);
   white-space:pre-line;
   opacity:0;
-  transform:translateY(12px);
-  animation:textIn .55s ease forwards;
+  transform:translateY(10px);
+  animation:textIn .5s ease forwards;
 }
 
 .reader-text.hidden{
@@ -330,6 +408,7 @@ body.lock{
   letter-spacing:.2px;
 }
 
+/* 動畫 */
 @keyframes fadeUp{
   to{
     opacity:1;
@@ -344,79 +423,128 @@ body.lock{
   }
 }
 
-@media (max-width:920px){
+/* 平板 */
+@media (max-width:980px){
+  .gallery{
+    grid-template-columns:1fr;
+    gap:40px;
+  }
+
   .reader-grid{
     grid-template-columns:1fr;
-    gap:24px;
+    gap:26px;
   }
 
   .reader-poster{
     position:relative;
     top:0;
-    width:min(430px,100%);
+    width:min(460px,100%);
+    margin:0 auto;
+  }
+
+  .reader-content{
+    padding-top:0;
   }
 }
 
+/* 手機 */
 @media (max-width:640px){
+  .shell{
+    padding-top:18px;
+    padding-bottom:40px;
+  }
+
   .hero{
-    padding-top:24px;
+    width:min(100%, calc(100% - 18px));
+    padding-top:8px;
+  }
+
+  .hero-title{
+    font-size:40px;
+  }
+
+  .hero-sub{
+    font-size:14px;
+    line-height:1.8;
   }
 
   .gallery{
-    gap:42px;
-    padding-bottom:46px;
+    width:min(100%, calc(100% - 18px));
+    gap:34px;
+    padding-top:24px;
   }
 
   .poster-frame{
-    max-width:390px;
+    width:min(100%, 390px);
     border-radius:24px;
   }
 
   .poster-title{
-    font-size:22px;
+    font-size:24px;
   }
 
   .reader-inner{
     width:min(100%, calc(100% - 16px));
-    padding:12px 0 24px;
+    padding:12px 0 22px;
+  }
+
+  .top-glass{
+    padding:8px;
+  }
+
+  .back-btn{
+    padding:10px 13px;
+    font-size:13px;
+  }
+
+  .lang-btn{
+    min-width:50px;
+    padding:8px 12px;
   }
 
   .reader-title{
-    font-size:34px;
+    font-size:36px;
+  }
+
+  .reader-divider{
+    margin:18px 0 14px;
   }
 
   .reader-text{
     font-size:15.5px;
-    line-height:1.9;
+    line-height:1.92;
   }
 
-  .back-btn{
-    padding:10px 14px;
-    font-size:13px;
+  .reader-content{
+    padding:0 2px;
   }
 }
 </style>
 </head>
 <body>
 
-<section class="hero">
-  <div class="hero-kicker">FILM SHOWCASE</div>
-  <h1 class="hero-title">作品集</h1>
-  <div class="hero-sub">點擊任一張海報，進入整頁沉浸式閱讀模式。</div>
-</section>
+<div class="shell">
+  <section class="hero">
+    <div class="hero-kicker">FILM SHOWCASE</div>
+    <h1 class="hero-title">作品集</h1>
+    <div class="hero-sub">點擊任一張海報，進入 Apple 風沉浸式閱讀模式。</div>
+  </section>
 
-<section class="gallery" id="gallery"></section>
+  <section class="gallery" id="gallery"></section>
+</div>
 
 <section class="reader" id="reader">
   <div class="reader-scroll" id="readerScroll">
     <div class="reader-inner">
       <div class="reader-top">
-        <button class="back-btn" id="backBtn">← 返回作品列表</button>
+        <div class="top-glass">
+          <button class="back-btn" id="backBtn">← 返回作品列表</button>
 
-        <div class="lang-switch" id="langSwitch">
-          <div class="lang-slider"></div>
-          <button class="lang-btn active" data-lang="zh">中</button>
-          <button class="lang-btn" data-lang="en">EN</button>
+          <div class="lang-switch" id="langSwitch">
+            <div class="lang-slider"></div>
+            <button class="lang-btn active" data-lang="zh">中</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+          </div>
         </div>
       </div>
 
@@ -433,7 +561,7 @@ body.lock{
           <div class="reader-divider"></div>
           <div class="reader-text" id="readerZh"></div>
           <div class="reader-text hidden" id="readerEn"></div>
-          <div class="reader-foot">Switch language anytime · Scroll to read</div>
+          <div class="reader-foot">Switch language anytime · Immersive reading mode</div>
         </div>
       </div>
     </div>
@@ -557,15 +685,21 @@ const langBtns = langSwitch.querySelectorAll(".lang-btn");
 let currentLang = "zh";
 
 function renderGallery(){
+  gallery.innerHTML = "";
   data.forEach(item=>{
     const card = document.createElement("article");
     card.className = "poster-card";
 
     card.innerHTML = `
-      <div class="poster-frame">
-        <img src="${item.img}" alt="${item.title} Poster" loading="lazy">
+      <div class="poster-wrap">
+        <div class="poster-frame">
+          <img src="${item.img}" alt="${item.title} Poster" loading="lazy">
+          <div class="poster-reflect"></div>
+          <div class="poster-vignette"></div>
+        </div>
         <div class="poster-glow"></div>
       </div>
+
       <div class="poster-meta">
         <div class="poster-tag">${item.tag}</div>
         <h2 class="poster-title">${item.title}</h2>
@@ -595,11 +729,10 @@ function setLanguage(lang){
     btn.classList.toggle("active", btn.dataset.lang === lang);
   });
 
-  // 重新觸發文字淡入
   const activeText = lang === "zh" ? readerZh : readerEn;
   activeText.style.animation = "none";
   activeText.offsetHeight;
-  activeText.style.animation = "textIn .55s ease forwards";
+  activeText.style.animation = "textIn .5s ease forwards";
 }
 
 function openReader(item){
@@ -626,6 +759,12 @@ langBtns.forEach(btn=>{
 });
 
 backBtn.addEventListener("click", closeReader);
+
+reader.addEventListener("click", (e)=>{
+  if(e.target === reader){
+    closeReader();
+  }
+});
 
 document.addEventListener("keydown", (e)=>{
   if(e.key === "Escape" && reader.classList.contains("active")){
