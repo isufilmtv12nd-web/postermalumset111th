@@ -9,110 +9,212 @@
 * { box-sizing: border-box; }
 
 :root{
-  --text:#ffffff;
-  --glass:rgba(18,18,18,0.35);
-  --glass-strong:rgba(10,10,10,0.55);
+  --bg: transparent;
+  --text: #111111;
+  --sub: rgba(17,17,17,.62);
+  --glass: rgba(255,255,255,.72);
+  --glass-line: rgba(255,255,255,.45);
+  --shadow: 0 20px 50px rgba(0,0,0,.10);
+  --radius-card: 34px;
+  --radius-info: 26px;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", "Noto Sans TC", sans-serif;
 }
 
 body{
-  margin:0;
-  background:transparent;
-  color:#fff;
-  font-family:-apple-system, BlinkMacSystemFont, sans-serif;
+  display:flex;
+  justify-content:center;
 }
 
-/* layout */
 .gallery{
-  width:min(1100px, calc(100% - 20px));
-  margin:20px auto;
+  width:min(1200px, calc(100% - 28px));
+  margin:24px auto 40px;
   display:flex;
   flex-direction:column;
-  gap:24px;
+  gap:42px;
+  align-items:center;
 }
 
-/* card */
+/* 每張卡片置中 */
 .poster-card{
   position:relative;
-  height:80vh;
-  border-radius:28px;
+  width:min(420px, 92vw);
+  aspect-ratio: 3 / 4.6;
+  border-radius:var(--radius-card);
   overflow:hidden;
-  background:#000;
+  background:#e9e9eb;
+  box-shadow: var(--shadow);
+  isolation:isolate;
 }
 
+/* 圖片完整顯示 */
 .poster-card img{
   width:100%;
   height:100%;
   object-fit:cover;
+  display:block;
 }
 
-/* info */
+/* 中間置中的玻璃資訊卡 */
 .poster-info{
   position:absolute;
-  bottom:16px;
-  left:16px;
-  right:16px;
-  padding:16px;
-  border-radius:18px;
-  background:linear-gradient(180deg, var(--glass), var(--glass-strong));
-  backdrop-filter:blur(18px);
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:calc(100% - 56px);
+  max-width:320px;
+  padding:18px 18px 16px;
+  border-radius:var(--radius-info);
+  background:var(--glass);
+  border:1px solid var(--glass-line);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  color:var(--text);
+  text-align:left;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
 }
 
-/* title */
-.poster-title{
-  font-size:32px;
-  margin:0;
-}
-
+/* 上方小字 */
 .poster-tagline{
-  font-size:12px;
-  letter-spacing:2px;
-  opacity:.7;
+  margin:0 0 8px;
+  font-size:11px;
+  letter-spacing:1.8px;
+  color:rgba(17,17,17,.48);
+  font-weight:700;
+  text-transform:uppercase;
 }
 
-/* language switch */
+/* 標題 */
+.poster-title{
+  margin:0;
+  font-size:27px;
+  line-height:1.08;
+  font-weight:700;
+  letter-spacing:-0.03em;
+  color:#111;
+}
+
+/* 語言切換 */
 .lang-switch{
-  margin-top:12px;
-  display:flex;
-  gap:8px;
+  margin-top:14px;
+  display:inline-flex;
+  gap:6px;
+  padding:4px;
+  border-radius:999px;
+  background:rgba(255,255,255,.46);
+  border:1px solid rgba(255,255,255,.42);
 }
 
 .lang-btn{
-  padding:6px 12px;
+  appearance:none;
+  border:0;
+  padding:7px 12px;
   border-radius:999px;
-  background:rgba(255,255,255,0.1);
-  border:1px solid rgba(255,255,255,0.1);
+  background:transparent;
+  color:rgba(17,17,17,.66);
   cursor:pointer;
   font-size:12px;
+  font-weight:600;
+  transition:all .22s ease;
 }
 
 .lang-btn.active{
-  background:#fff;
-  color:#000;
+  background:#ffffff;
+  color:#111;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
-/* text */
+/* 文字 */
 .text{
-  margin-top:12px;
+  margin-top:14px;
   font-size:14px;
-  line-height:1.6;
+  line-height:1.7;
+  color:var(--sub);
+  min-height:72px;
 }
 
 .hidden{
   display:none;
 }
 
-/* button */
+/* 按鈕 */
 .poster-btn{
-  margin-top:12px;
-  display:inline-block;
+  margin-top:14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   padding:10px 14px;
   border-radius:999px;
-  background:#fff;
-  color:#000;
+  background:#111;
+  color:#fff;
   text-decoration:none;
+  font-size:13px;
   font-weight:600;
+  letter-spacing:.01em;
+  transition:transform .22s ease, opacity .22s ease, background .22s ease;
 }
 
+.poster-btn:hover{
+  transform:translateY(-1px);
+  opacity:.92;
+}
+
+/* Apple 感的微動態 */
+.poster-card{
+  transition:transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s cubic-bezier(.22,1,.36,1);
+}
+
+.poster-card:hover{
+  transform:translateY(-4px);
+  box-shadow: 0 28px 60px rgba(0,0,0,.14);
+}
+
+/* 手機版 */
+@media (max-width: 640px){
+  .gallery{
+    width:min(100%, calc(100% - 18px));
+    gap:28px;
+    margin:14px auto 28px;
+  }
+
+  .poster-card{
+    width:min(390px, 100%);
+    aspect-ratio: 3 / 4.8;
+    border-radius:28px;
+  }
+
+  .poster-info{
+    width:calc(100% - 32px);
+    max-width:none;
+    padding:16px 16px 14px;
+    border-radius:22px;
+  }
+
+  .poster-title{
+    font-size:23px;
+  }
+
+  .poster-tagline{
+    font-size:10px;
+    margin-bottom:7px;
+  }
+
+  .text{
+    font-size:13px;
+    line-height:1.65;
+    min-height:auto;
+  }
+
+  .poster-btn{
+    width:100%;
+    padding:11px 14px;
+  }
+}
 </style>
 </head>
 
@@ -130,7 +232,6 @@ link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E6%B0%B4%E7%
 zh:"有些痛，不在身體，而在被迫承受的「意義」。當社會早已設下框架，女性是否真的能決定自己的身體與生命？",
 en:"Some pain does not reside in the body, but in the meaning one is forced to bear. Can women truly decide for their own bodies?"
 },
-
 {
 title:"透明的孩子",
 tag:"THE WINGLESS CHILD",
@@ -139,7 +240,6 @@ link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E9%80%8F%E6%
 zh:"有些人活著，卻從未被看見。",
 en:"Some people live, yet remain unseen."
 },
-
 {
 title:"煙燻屋",
 tag:"THROUGH THE SMOKE",
@@ -148,7 +248,6 @@ link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%85%99%E7%
 zh:"有些距離，不只是時間，而是說不出口的過去。",
 en:"Some distances are not time, but unspoken pasts."
 },
-
 {
 title:"真話",
 tag:"MAKOTO",
@@ -157,7 +256,6 @@ link:"https://sites.google.com/view/malumm/%E4%BD%9C%E5%93%81works/%E7%9C%9F%E8%
 zh:"有些謊言，是為了讓人繼續被愛。",
 en:"Some lies are told so one may continue to be loved."
 },
-
 {
 title:"瘋籠",
 tag:"THE MAD CAGE",
@@ -170,52 +268,49 @@ en:"Some escape the cage, yet never find freedom."
 
 const gallery = document.getElementById("gallery");
 
-data.forEach((item,i)=>{
+data.forEach((item)=>{
+  const el = document.createElement("div");
+  el.innerHTML = `
+    <div class="poster-card">
+      <img src="${item.img}" alt="${item.title}">
 
-const el = document.createElement("div");
-el.innerHTML = `
-<div class="poster-card">
-<img src="${item.img}">
+      <div class="poster-info">
+        <div class="poster-tagline">${item.tag}</div>
+        <h2 class="poster-title">${item.title}</h2>
 
-<div class="poster-info">
-<h2 class="poster-title">${item.title}</h2>
-<div class="poster-tagline">${item.tag}</div>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="en">English</button>
+        </div>
 
-<div class="lang-switch">
-<button class="lang-btn active" data-lang="zh">中文</button>
-<button class="lang-btn" data-lang="en">English</button>
-</div>
+        <div class="text zh">${item.zh}</div>
+        <div class="text en hidden">${item.en}</div>
 
-<div class="text zh">${item.zh}</div>
-<div class="text en hidden">${item.en}</div>
+        <a class="poster-btn" href="${item.link}" target="_top">View Full Page</a>
+      </div>
+    </div>
+  `;
 
-<a class="poster-btn" href="${item.link}" target="_top">View Full Page</a>
-</div>
-</div>
-`;
+  const zh = el.querySelector(".zh");
+  const en = el.querySelector(".en");
+  const btns = el.querySelectorAll(".lang-btn");
 
-const card = el.querySelector(".poster-card");
-const zh = el.querySelector(".zh");
-const en = el.querySelector(".en");
-const btns = el.querySelectorAll(".lang-btn");
+  btns.forEach(btn => {
+    btn.onclick = () => {
+      btns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
 
-btns.forEach(btn=>{
-btn.onclick=()=>{
-btns.forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
+      if(btn.dataset.lang === "zh"){
+        zh.classList.remove("hidden");
+        en.classList.add("hidden");
+      } else {
+        en.classList.remove("hidden");
+        zh.classList.add("hidden");
+      }
+    };
+  });
 
-if(btn.dataset.lang==="zh"){
-zh.classList.remove("hidden");
-en.classList.add("hidden");
-}else{
-en.classList.remove("hidden");
-zh.classList.add("hidden");
-}
-}
-});
-
-gallery.appendChild(el);
-
+  gallery.appendChild(el);
 });
 </script>
 
